@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find . -maxdepth 6 -not -path '*/\\\\.git*' -not -path '*/build/*' -not -path '*/.gradle/*' -not -path '*/.idea/*' -type f)",
+      "Bash(grep -oE '\"name\":\"[^\"]{1,60}\"' \"design/Tabletop Club App.html\")",
+      "Bash(grep -oE '>[A-Z][a-zA-Z ]{3,40}<' \"design/Tabletop Club App.html\")"
+    ]
+  }
+}
