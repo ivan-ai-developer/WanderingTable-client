@@ -6,9 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a fresh Android Studio project scaffold (default "Empty Activity" Compose template) for **Wandering Table**, a tabletop board game club app. Only the generated boilerplate exists so far (`MainActivity.kt`, theme files, default tests) — no app-specific screens or logic have been implemented yet.
 
-The intended feature set can be inferred from the design mockups in `design/` (`Tabletop Club App.html` and `Wandering Table UI Kit.html`, bundled Figma-style exports — large single-file HTML, not meant to be edited by hand). They describe a club app for finding opponents and hosting board game sessions: sign up / log in, browse a game library (e.g. Chess, Azul, Wingspan, Settlers of Catan, Terraforming Mars), post/browse "Find an Opponent" requests with skill level and location, host/join games, club news and announcements, notifications, and a user profile with stats (wins, skill level).
+The intended feature set can be inferred from the design mockups in `specs/` (`Wandering Table App Design.html` and `Wandering Table UI Kit.html`, bundled Figma-style exports — large single-file HTML, not meant to be edited by hand). They describe a club app for finding opponents and hosting board game sessions: sign up / log in, browse a game library (e.g. Chess, Azul, Wingspan, Settlers of Catan, Terraforming Mars), post/browse "Find an Opponent" requests with skill level and location, host/join games, club news and announcements, notifications, and a user profile with stats (wins, skill level).
 
 When implementing new features, treat the design HTML files as the source of truth for screen names, copy, and flows, but do not attempt to parse or programmatically extract from them beyond visual/text reference.
+
+## Memory Tools (MCP)
+
+- Always prioritize `codebase-memory` tools (`trace_call_path`, `query_graph`, `get_architecture`) over global text search (`grep`).
+- Use the knowledge graph to understand structural relations, call hierarchies, and architecture before modifying files. This saves context tokens.
+- After major changes (changes caused by the /plan-mode command) you can update Claude.md.
 
 ## Build system
 
@@ -38,3 +44,10 @@ There are currently no linters/formatters configured beyond Android Lint and `ko
 - Entry point is `MainActivity` (`app/src/main/java/ru/gohasoft/wanderingtable/MainActivity.kt`), a single `ComponentActivity` using `setContent { }` with edge-to-edge enabled — standard for a Compose-only app with no Activity/Fragment navigation graph yet.
 - Theming lives in `app/src/main/java/ru/gohasoft/wanderingtable/ui/theme/` (`Color.kt`, `Theme.kt`, `Type.kt`), following the standard Compose Material 3 template structure: `WanderingTableTheme` picks between dynamic color (Android 12+), and static light/dark `ColorScheme`s as a fallback.
 - No dependency injection framework, networking, persistence, or navigation library is wired up yet — these will need to be chosen/added as the app grows past the scaffold stage.
+
+
+# Skills 
+
+You can find all instructions about architecture in skills folder.
+You have to write all updates using these skills.
+The skills will be updated as the application grows.

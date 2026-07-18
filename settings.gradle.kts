@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -23,4 +24,12 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "WanderingTable"
-include(":app")
+include(
+    ":app",
+    ":core:domain",
+    ":core:navigation",
+    ":core:presentation",
+    ":core:data",
+    ":core:uikit"
+)
+
