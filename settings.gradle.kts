@@ -27,7 +27,6 @@ rootProject.name = "WanderingTable"
 include(
     ":app",
     ":core:domain",
-    ":core:navigation",
     ":core:presentation",
     ":core:data",
     ":core:uikit"

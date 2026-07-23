@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_internet_title">No internet connection</string>
+    <string name="error_no_internet_description">Check your connection and try again.</string>
+    <string name="error_unauthorized_title">Session expired</string>
+    <string name="error_unauthorized_description">Please log in again to continue.</string>
+    <string name="error_server_title">Something went wrong on our side</string>
+    <string name="error_server_description">The server is unavailable right now. Please try again later.</string>
+    <string name="error_disk_full_title">Not enough storage</string>
+    <string name="error_disk_full_description">Free up some space on your device and try again.</string>
+    <string name="error_unknown_title">Something went wrong</string>
+    <string name="error_unknown_description">An unexpected error occurred. Please try again.</string>
+</resources>

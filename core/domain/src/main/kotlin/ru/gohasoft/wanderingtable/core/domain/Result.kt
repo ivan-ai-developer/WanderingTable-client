@@ -1,4 +1,4 @@
-package ru.gohasoft.wanderingtable.core.data
+package ru.gohasoft.wanderingtable.core.domain
 
 import ru.gohasoft.wanderingtable.core.domain.exception.AppException
 

@@ -7,7 +7,7 @@ with a `userId` argument in module `:feature:profile`.
 
 `:feature:profile` `build.gradle.kts`:
 - apply `kotlin("plugin.serialization")` — REQUIRED, screens are `@Serializable`;
-- depend on `:core:navigation`, Hilt (+ ksp compiler), `androidx.hilt:hilt-navigation-compose`.
+- depend on `:core:presentation` (brings navigation + configs), Hilt (+ ksp compiler), `androidx.hilt:hilt-navigation-compose`.
 
 ## 1. The screen — serializable key + UI
 
@@ -15,7 +15,7 @@ with a `userId` argument in module `:feature:profile`.
 package com.example.feature.profile
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel // NOT androidx.hilt.navigation.compose — that one is deprecated
 import com.example.core.navigation.ComposableScreen
 import kotlinx.serialization.Serializable
 

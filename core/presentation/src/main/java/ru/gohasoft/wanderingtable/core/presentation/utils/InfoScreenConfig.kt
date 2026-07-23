@@ -1,5 +1,7 @@
 package ru.gohasoft.wanderingtable.core.presentation.utils
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import ru.gohasoft.wanderingtable.core.presentation.utils.ButtonConfig.IconButton
 import ru.gohasoft.wanderingtable.core.presentation.utils.ButtonConfig.TextButton
 import ru.gohasoft.wanderingtable.core.presentation.utils.InfoScreenConfig.Marker.PrimaryButton
@@ -11,6 +13,7 @@ import ru.gohasoft.wanderingtable.core.presentation.utils.InfoScreenConfig.Marke
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.IconResource
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 
+@Parcelize
 data class InfoScreenConfig(
     val title: TextResource?,
     val description: TextResource?,
@@ -22,7 +25,7 @@ data class InfoScreenConfig(
     val toolbarNavigationButton: IconButton<ToolbarNavigationButton>?,
     val toolbarTitle: TextResource?,
     val toolbarTextButton: TextButton<ToolbarTextButton>?
-) {
+) : Parcelable {
     fun rebuild(): Builder = Builder(this)
 
     fun rebuild(block: Builder.() -> Unit) = Builder(this).apply(block).build()

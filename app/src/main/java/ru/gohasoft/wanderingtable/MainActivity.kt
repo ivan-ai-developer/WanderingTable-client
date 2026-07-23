@@ -4,61 +4,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ru.gohasoft.wanderingtable.core.uikit.components.button.PrimaryButton
-import ru.gohasoft.wanderingtable.core.uikit.components.card.ListCard
-import ru.gohasoft.wanderingtable.core.uikit.theme.WanderingTableSpacing
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import ru.gohasoft.wanderingtable.core.presentation.navigation.router.nav3.Navigation3Router
+import ru.gohasoft.wanderingtable.core.presentation.navigation.nav3.NavigationHost
 import ru.gohasoft.wanderingtable.core.uikit.theme.WanderingTableTheme
+import ru.gohasoft.wanderingtable.welcome.WelcomeScreen
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var router: Navigation3Router
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             WanderingTableTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    UikitShowcase(modifier = Modifier.padding(innerPadding))
-                }
+                NavigationHost(router = router, startScreen = WelcomeScreen())
             }
         }
-    }
-}
-
-@Composable
-fun UikitShowcase(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(WanderingTableSpacing.l),
-        verticalArrangement = Arrangement.spacedBy(WanderingTableSpacing.l),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ListCard(
-            title = "Chess Night",
-            meta = "Fri · 7:00 PM · Table 3",
-            ctaText = "Join Game",
-            onCtaClick = {},
-            badgeText = "Any level",
-        )
-        PrimaryButton(text = "Host a Game", onClick = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun UikitShowcasePreview() {
-    WanderingTableTheme {
-        UikitShowcase()
     }
 }

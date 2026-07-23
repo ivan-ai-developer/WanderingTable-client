@@ -11,7 +11,8 @@
       "PowerShell(Get-ChildItem *)",
       "PowerShell(Get-Command *)",
       "PowerShell($env:JAVA_HOME=\"C:\\\\Program Files\\\\Common Files\\\\Oracle\\\\Java\\\\javapath\"; .\\\\gradlew.bat :app:compileDebugKotlin -q 2>&1 | Select-Object -First 40)",
-      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\Common Files\\\\Oracle\\\\Java\\\\javapath\" | Select-Object Name, Target; Get-Item \"C:\\\\Program Files\\\\Common Files\\\\Oracle\\\\Java\\\\javapath\\\\java.exe\" | Select-Object -ExpandProperty Target -ErrorAction SilentlyContinue; \\(Get-Command java\\).Source)"
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\Common Files\\\\Oracle\\\\Java\\\\javapath\" | Select-Object Name, Target; Get-Item \"C:\\\\Program Files\\\\Common Files\\\\Oracle\\\\Java\\\\javapath\\\\java.exe\" | Select-Object -ExpandProperty Target -ErrorAction SilentlyContinue; \\(Get-Command java\\).Source)",
+      "mcp__codebase-memory-mcp__list_projects"
     ]
   }
 }

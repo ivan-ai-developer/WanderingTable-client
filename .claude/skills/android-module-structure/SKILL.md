@@ -19,9 +19,8 @@ description: Module layout, dependency rules, and Gradle convention plugins for 
 ```
 :app
 :build-logic                    ← Gradle convention plugins
-:core:navigation                ← Basic principles and contracts for inter-module navigation
 :core:domain                    ← Entities, repository interfaces, error types, Result
-:core:presentation              ← Shared UI utilities (ObserveAsEvents, UiText, etc.)
+:core:presentation              ← MVI base (MviViewModel), navigation (Router/Command/NavigationHost), configs, TextResource/IconResource, ObserveAsEvents
 :core:uikit                     ← Reusable Compose components, colors, theme, typography
 :data:<name>                    ← Repo implementations, DTOs, DBOs, mappers, Room DAOs, Retrofit api
 :feature:<name>                 ← ViewModel, screen composables, state, actions, events
@@ -35,7 +34,7 @@ For standalone, self-contained concerns that involve meaningful complexity (mult
  
 | Layer | May depend on |
 |---|---|
-| `feature:<name>` | `core:domain`, `core:presentation`, `core:uikit`, `core:navigation` |
+| `feature:<name>` | `core:domain`, `core:presentation`, `core:uikit` |
 | `data:<name>` | `core:domain`, `core:data` |
 | `:app` | everything (wires all modules) |
 

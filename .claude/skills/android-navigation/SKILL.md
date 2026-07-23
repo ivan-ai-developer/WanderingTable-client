@@ -20,7 +20,13 @@ is a Cicerone-style **Router + Command** pattern on top of **Jetpack Navigation 
 (stable, `androidx.navigation3:*:1.0.0`), where the app owns the back stack as plain
 Compose state.
 
-## Core abstractions (module `:core:navigation`)
+> **Module location:** there is no separate `:core:navigation` module — navigation
+> lives in `:core:presentation`, package
+> `ru.gohasoft.wanderingtable.core.presentation.navigation` (merged so that
+> `ShowSnackbar` can take `SnackbarScreenConfig` directly). Wherever this skill or
+> its references say `:core:navigation`, read `:core:presentation`.
+
+## Core abstractions (package `core.presentation.navigation`)
 
 | Abstraction | Role |
 |---|---|
@@ -57,11 +63,13 @@ Compose state.
    (`rememberSaveableStateHolderNavEntryDecorator()` + `rememberViewModelStoreNavEntryDecorator()`)
    for per-entry `rememberSaveable`/ViewModel scoping, and `SavedStateHandle` inside
    ViewModels for their own state.
-7. **Feature modules depend only on `:core:navigation` interfaces.** A feature module
-   may define its own `Command` implementations and its own screens without touching
-   the core module. The core module must never depend on feature modules.
-8. **UI events like snackbars are Commands too** (`ShowSnackbar`). `Command.execute`
-   is `suspend` precisely so commands can await snackbar display, animations, etc.
+7. **Feature modules depend only on `:core:presentation` abstractions.** A feature
+   module may define its own `Command` implementations and its own screens without
+   touching the core module. The core module must never depend on feature modules.
+8. **UI events like snackbars are Commands too** — `ShowSnackbar(config: SnackbarScreenConfig)`.
+   `Command.execute` is `suspend` precisely so commands can await snackbar display,
+   animations, etc. The snackbar's text is a `TextResource`, resolved inside
+   `NavigationHost`.
 9. **Guard against double-clicks** on navigation triggers with `dropUnlessResumed`
    or equivalent when wiring click handlers that navigate.
 
@@ -89,6 +97,6 @@ When more than one applies (e.g. "set up navigation and add two screens"), read
 - [ ] ViewModel with args uses `@AssistedInject` + factory + `creationCallback`.
 - [ ] `SavedStateHandle` used for state persistence where the screen has
       user-modifiable transient state worth surviving process death.
-- [ ] New feature commands implement `Command` from `:core:navigation` only.
+- [ ] New feature commands implement `Command` from `:core:presentation` only.
 - [ ] Build passes: kotlinx-serialization plugin applied to every module that
       declares screens.

@@ -13,7 +13,7 @@ This skill uses `withErrorHandle<T>`, and the extension helpers defined in the *
 
 ## Data Result
 
-Use Result data class from ru.gohasoft.wanderingtable.core.data package to deliver results of repository work. You have to use ResultFlow data wrap helper in ru.gohasoft.wanderingtable.core.data.repository package (use only in repositories)
+Use the Result sealed class from the `ru.gohasoft.wanderingtable.core.domain` package (it lives in `:core:domain` so repository interfaces in domain can return `Flow<Result<T>>`). You have to use ResultFlow data wrap helper in ru.gohasoft.wanderingtable.core.data.repository package (use only in repositories)
 
 ---
 

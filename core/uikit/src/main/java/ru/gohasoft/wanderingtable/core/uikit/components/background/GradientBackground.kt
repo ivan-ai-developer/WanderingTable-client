@@ -39,9 +39,8 @@ fun GradientBackground(
                     0f to Purple900,
                     0.45f to Purple600,
                     1f to Purple800,
-                ),
-                RoundedCornerShape(WanderingTableRadius.l),
-            ),
+                )
+            )
     ) {
         if (watermark != null) {
             Image(

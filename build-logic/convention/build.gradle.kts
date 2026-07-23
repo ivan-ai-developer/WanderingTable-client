@@ -8,6 +8,8 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.compose.compiler.gradlePlugin)
+    compileOnly(libs.hilt.gradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
 }
 
 gradlePlugin {
@@ -27,6 +29,10 @@ gradlePlugin {
         register("domainModule") {
             id = "wanderingtable.domain.module"
             implementationClass = "DomainModuleConventionPlugin"
+        }
+        register("hilt") {
+            id = "wanderingtable.hilt"
+            implementationClass = "HiltConventionPlugin"
         }
     }
 }

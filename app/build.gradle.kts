@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.wanderingtable.android.application)
     alias(libs.plugins.wanderingtable.compose)
+    alias(libs.plugins.wanderingtable.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -23,6 +25,8 @@ android {
 
 dependencies {
     implementation(project(":core:uikit"))
+    implementation(project(":core:presentation"))
+    implementation(project(":core:domain"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

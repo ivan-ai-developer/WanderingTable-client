@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_internet_title">Нет подключения к интернету</string>
+    <string name="error_no_internet_description">Проверьте соединение и попробуйте ещё раз.</string>
+    <string name="error_unauthorized_title">Сессия истекла</string>
+    <string name="error_unauthorized_description">Войдите снова, чтобы продолжить.</string>
+    <string name="error_server_title">Что-то пошло не так на нашей стороне</string>
+    <string name="error_server_description">Сервер сейчас недоступен. Попробуйте позже.</string>
+    <string name="error_disk_full_title">Недостаточно памяти</string>
+    <string name="error_disk_full_description">Освободите место на устройстве и попробуйте ещё раз.</string>
+    <string name="error_unknown_title">Что-то пошло не так</string>
+    <string name="error_unknown_description">Произошла непредвиденная ошибка. Попробуйте ещё раз.</string>
+</resources>

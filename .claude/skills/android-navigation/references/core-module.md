@@ -1,7 +1,21 @@
-# Core navigation module (`:core:navigation`) — full implementation
+# Core navigation module — full implementation
 
 Complete reference implementation. Adapt package names to the project
 (`com.example.core.navigation` used below). Keep class names as-is.
+
+> **Already implemented in this project** in `:core:presentation`, package
+> `ru.gohasoft.wanderingtable.core.presentation.navigation`. Deltas of the real code
+> vs. this reference (the real code wins):
+> - `interface Screen : NavKey` (Screen itself extends NavKey).
+> - Nav3 1.0's `rememberNavBackStack(vararg elements: NavKey)` is **not generic**:
+>   the stack is `NavBackStack<NavKey>`, and `NavigationCommandContext.backStack`
+>   is typed accordingly.
+> - `NavigationCommandContext.showSnackbar(config: SnackbarScreenConfig)` — no
+>   string-based overload; `ShowSnackbar(config, onAction)` takes the config, and
+>   `NavigationHost` resolves its `TextResource`s via `LocalContext`.
+> - Gradle: modules use the `wanderingtable.*` convention plugins + `kotlin-serialization`;
+>   built-in Kotlin is opted out (`android.builtInKotlin=false` + `android.newDsl=false`
+>   in gradle.properties) because KGP compiler plugins (parcelize) are no-ops under it.
 
 ## 1. Gradle setup
 
