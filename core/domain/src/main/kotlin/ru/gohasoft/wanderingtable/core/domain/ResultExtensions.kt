@@ -1,9 +1,11 @@
 package ru.gohasoft.wanderingtable.core.domain
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.gohasoft.wanderingtable.core.domain.exception.AppException
+import ru.gohasoft.wanderingtable.core.domain.exception.UnknownException
 
 fun <T, R> Flow<Result<T>>.mapData(
     map: (T?) -> R?,
@@ -28,3 +30,13 @@ fun <T> Flow<Result<T>>.onFailure(
 }
 
 fun <T> Flow<Result<T>>.asEmptyResult(): Flow<Result<Unit>> = mapData { }
+
+suspend fun <T> Flow<Result<T>>.firstSuccessOrErrorResult(): Result<T>? =
+    firstOrNull { result -> result.isSuccess || result.isError }
+
+suspend fun <T> Flow<Result<T>>.firstSuccessOrErrorData(): T? =
+    firstOrNull { result -> result.isSuccess || result.isError }?.data
+
+fun <T> Result<T>?.orUnknownErrorResult(
+    message: String = "something went wrong"
+) = this ?: Result.Error(UnknownException(message))

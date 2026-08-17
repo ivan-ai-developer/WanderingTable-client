@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to find your next game</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_email_placeholder">you@example.com</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_password_placeholder">Enter your password</string>
+    <string name="login_submit_button">Sign In</string>
+    <string name="login_signup_prompt">Don\'t have an account?</string>
+    <string name="login_signup_link">Sign Up</string>
+    <string name="login_forgot_password_link">Forgot password?</string>
+
+    <string name="signup_title">Create account</string>
+    <string name="signup_subtitle">Join the club to start playing</string>
+    <string name="signup_name_label">Name</string>
+    <string name="signup_name_placeholder">Enter your name</string>
+    <string name="signup_email_label">Email</string>
+    <string name="signup_email_placeholder">you@example.com</string>
+    <string name="signup_password_label">Password</string>
+    <string name="signup_password_placeholder">At least 8 characters</string>
+    <string name="signup_confirm_password_label">Confirm password</string>
+    <string name="signup_confirm_password_placeholder">Re-enter your password</string>
+    <string name="signup_submit_button">Sign Up</string>
+    <string name="signup_login_prompt">Already have an account?</string>
+    <string name="signup_login_link">Sign In</string>
+    <string name="signup_error_password_mismatch">Passwords don\'t match</string>
+
+    <string name="forgot_password_title">Reset password</string>
+    <string name="forgot_password_subtitle">Enter your email and we\'ll send you a reset link</string>
+    <string name="forgot_password_email_label">Email</string>
+    <string name="forgot_password_email_placeholder">you@example.com</string>
+    <string name="forgot_password_submit_button">Send reset link</string>
+    <string name="forgot_password_back_link">Back to sign in</string>
+    <string name="forgot_password_sent_message">If that email is registered, a reset link is on its way</string>
+
+    <string name="auth_error_name_required">Name is required</string>
+    <string name="auth_error_name_too_long">Name must be 64 characters or fewer</string>
+    <string name="auth_error_invalid_email">Enter a valid email address</string>
+    <string name="auth_error_password_required">Password is required</string>
+    <string name="auth_error_password_too_short">Password must be at least 8 characters</string>
+    <string name="auth_error_password_missing_lowercase">Password must contain a lowercase letter</string>
+    <string name="auth_error_password_missing_uppercase">Password must contain an uppercase letter</string>
+    <string name="auth_error_password_missing_digit">Password must contain a digit</string>
+    <string name="auth_error_login_invalid_credentials">Incorrect email or password</string>
+    <string name="auth_error_signup_email_taken">An account with this email already exists</string>
+    <string name="auth_error_password_reset_unavailable">Password reset isn\'t available yet</string>
+    <string name="auth_error_bad_request">Please check your details and try again</string>
+    <string name="auth_error_no_internet">No internet connection</string>
+    <string name="auth_error_generic">Something went wrong. Please try again</string>
+</resources>

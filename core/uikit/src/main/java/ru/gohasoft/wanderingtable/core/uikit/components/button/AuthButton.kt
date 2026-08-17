@@ -56,7 +56,11 @@ fun AuthButton(
 @Composable
 private fun AuthButtonPreview() {
     WanderingTableTheme {
-        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background).padding(WanderingTableSpacing.m)) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(WanderingTableSpacing.m)
+        ) {
             AuthButton(text = "Sign In", onClick = {})
         }
     }

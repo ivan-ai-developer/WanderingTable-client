@@ -19,7 +19,7 @@ When implementing new features, treat the design HTML files as the source of tru
 ## Build system
 
 - Gradle (Kotlin DSL), Android Gradle Plugin 9.2.1, Kotlin 2.2.10, convention plugins in `build-logic/` (`wanderingtable.android.application`, `.android.library`, `.compose`, `.domain.module`, `.hilt`).
-- Modules: `:app`, `:core:domain` (pure Kotlin), `:core:data` (pure Kotlin), `:core:presentation` (MVI + navigation + configs), `:core:uikit`.
+- Modules: `:app`, `:core:domain` (pure Kotlin), `:core:data` (pure Kotlin), `:core:network` (OkHttp/Retrofit + token pipeline), `:core:presentation` (MVI + navigation + configs), `:core:uikit`, `:feature:auth`, `:feature:main`, `:data:auth`.
 - `compileSdk`/`targetSdk` 36, `minSdk` 28.
 - UI toolkit: Jetpack Compose (Material 3), via the `androidx.compose.bom` (2026.02.01) and the `org.jetbrains.kotlin.plugin.compose` plugin — no XML layouts.
 - DI: Dagger Hilt (KSP) via the `wanderingtable.hilt` convention plugin.
@@ -46,7 +46,9 @@ There are currently no linters/formatters configured beyond Android Lint and `ko
 
 - Entry point: `WanderingTableApp` (`@HiltAndroidApp`) → `MainActivity` (`@AndroidEntryPoint`), which injects `Navigation3Router` and renders `NavigationHost(router, startScreen)` inside `WanderingTableTheme` (theme lives in `:core:uikit`).
 - `:core:domain` — pure Kotlin: entities (`domain/model`), repository interfaces (`domain/repository`, return `Flow<Result<T>>`), `Result` + flow helpers, `AppException` hierarchy (`NetworkException`, `LocalException`).
-- `:core:data` — `ResultFlow` (offlineOnly/onlineOnly/offlineFirst, repositories only) and `withErrorHandling` (data sources: maps framework exceptions to `AppException`). Retrofit/Room are not wired yet — add per feature.
+- `:core:data` — pure Kotlin: `ResultFlow` (offlineOnly/onlineOnly/offlineFirst, repositories only) and `withErrorHandling` (data sources: maps framework exceptions to `AppException` by HTTP status). No Android/OkHttp here.
+- `:core:network` — the shared HTTP stack: `Json`, two OkHttp/Retrofit pairs behind the `@PlainClient` / `@AuthenticatedClient` qualifiers, `AuthInterceptor` (Bearer header) and `TokenAuthenticator` (serialized, single-flight refresh on 401). It never depends on a data module: `:data:auth` fulfils its `TokenProvider` / `TokenRefresher` interfaces via Hilt. New feature APIs take `@AuthenticatedClient Retrofit`; only public endpoints use `@PlainClient`. `BASE_URL` comes from the `wt.baseUrl` Gradle property (default `http://10.0.2.2:8050/`, the emulator's host alias) — a new host also needs an entry in `app/src/main/res/xml/network_security_config.xml` while the dev backend is cleartext.
+- `:data:auth` — the `AuthRepository` implementation. Tokens live in a Preferences DataStore, AES/GCM-encrypted with an Android Keystore key (`KeystoreTokenCipher`); the user profile is cached alongside them in the clear. Token expiry is handled reactively (401 → refresh), never by inspecting a JWT. `GET /users/me` is the only source of the signed-in user's id/name/roles. Room is not wired anywhere yet — add per feature.
 - `:core:presentation` — MVI base (`MviViewModel<State, Event, Effect>`, `ObserveAsEvents`), navigation (Nav3 Router/Command/`NavigationHost`, package `core.presentation.navigation` — there is **no** separate `:core:navigation` module), Parcelable UI configs (`InfoScreenConfig`, `SnackbarScreenConfig`, `ButtonConfig`, `Action`) and resources (`TextResource`, `IconResource`) with error→config mappings (`AppException.infoScreenConfig` / `.snackbarConfig`).
 - Screens are `@Serializable` subclasses of `ComposableScreen`; navigation goes only through `Router.execute(Forward/Replace/Back/BackTo/NewRoot/ShowSnackbar(config))` from ViewModels. Details — see the `android-navigation` and `android-presentation-mvi` skills.
 

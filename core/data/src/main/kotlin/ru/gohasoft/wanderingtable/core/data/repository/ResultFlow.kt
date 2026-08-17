@@ -48,11 +48,15 @@ object ResultFlow {
             emit(Result.Error(error.asAppException()))
         }
 
+    /**
+     * [query] may emit `null` for "nothing cached yet" — [Result] already carries nullable data,
+     * and callers such as the session repository legitimately have no local value to start from.
+     */
     inline fun <ResultType, RequestType> offlineFirst(
-        crossinline query: () -> Flow<ResultType>,
+        crossinline query: () -> Flow<ResultType?>,
         crossinline fetch: suspend () -> RequestType,
-        crossinline saveFetchResult: suspend (RequestType, ResultType) -> Unit,
-        crossinline shouldFetch: (ResultType) -> Boolean = { true },
+        crossinline saveFetchResult: suspend (RequestType, ResultType?) -> Unit,
+        crossinline shouldFetch: suspend (ResultType?) -> Boolean = { true },
         crossinline onFetchSuccess: () -> Unit = {},
         crossinline onFetchFailed: (AppException) -> Unit = {},
     ): Flow<Result<ResultType>> = channelFlow {

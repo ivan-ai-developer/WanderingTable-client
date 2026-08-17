@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">WanderingTable</string>
-    <string name="welcome_title">Wandering Table</string>
-    <string name="welcome_subtitle">Find opponents, host games, join the club.</string>
-    <string name="welcome_show_snackbar">Show test snackbar</string>
-    <string name="welcome_snackbar_message">Navigation pipeline works!</string>
 </resources>

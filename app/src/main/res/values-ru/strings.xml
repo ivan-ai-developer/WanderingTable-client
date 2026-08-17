@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Кочующий стол</string>
-    <string name="welcome_title">Кочующий стол</string>
-    <string name="welcome_subtitle">Находите соперников, проводите игры, вступайте в клуб.</string>
-    <string name="welcome_show_snackbar">Показать тестовый снэкбар</string>
-    <string name="welcome_snackbar_message">Навигационный конвейер работает!</string>
 </resources>

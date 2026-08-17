@@ -29,6 +29,10 @@ include(
     ":core:domain",
     ":core:presentation",
     ":core:data",
-    ":core:uikit"
+    ":core:network",
+    ":core:uikit",
+    ":feature:auth",
+    ":feature:main",
+    ":data:auth"
 )
 

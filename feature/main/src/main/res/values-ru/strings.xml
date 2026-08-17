@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Кочующий стол</string>
+    <string name="welcome_subtitle">Находите соперников, проводите игры, вступайте в клуб.</string>
+    <string name="welcome_signed_in_as">Вы вошли как %1$s</string>
+    <string name="welcome_logout_button">Выйти</string>
+</resources>
