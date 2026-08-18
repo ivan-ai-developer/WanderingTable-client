@@ -1,6 +1,7 @@
 package ru.gohasoft.wanderingtable.core.presentation.navigation.nav3
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -40,10 +41,20 @@ fun NavigationHost(
         }
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+    // No content insets: screens draw edge to edge and apply their own
+    // safeDrawingPadding/imePadding, so backgrounds reach under the system bars.
+    // The snackbar therefore has to inset itself.
+    Scaffold(
+        contentWindowInsets = WindowInsets(0),
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.safeDrawingPadding(),
+            )
+        },
+    ) { _ ->
         NavDisplay(
             backStack = backStack,
-            modifier = Modifier.padding(padding),
             onBack = { router.execute(Back()) },
             entryDecorators = listOf(
                 // Order matters. Both are REQUIRED for process-death safety:

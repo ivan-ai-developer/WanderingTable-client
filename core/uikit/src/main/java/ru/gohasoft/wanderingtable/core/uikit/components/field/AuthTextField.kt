@@ -3,6 +3,8 @@ package ru.gohasoft.wanderingtable.core.uikit.components.field
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -47,6 +51,9 @@ fun AuthTextField(
     isPassword: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+
     Column(
         modifier = modifier
             .fillMaxWidth(),
@@ -73,19 +80,21 @@ fun AuthTextField(
                     color = Color.White.copy(alpha = 0.22f),
                     shape = RoundedCornerShape(WanderingTableRadius.s)
                 )
+                // Before the horizontal padding, so the whole pill — padding
+                // included — focuses the field on tap.
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                ) { focusRequester.requestFocus() }
                 .padding(horizontal = WanderingTableSpacing.m),
             contentAlignment = Alignment.CenterStart,
         ) {
-            if (value.isEmpty() && placeholder.isNotEmpty()) {
-                Text(
-                    text = placeholder,
-                    color = Color.White.copy(alpha = 0.55f),
-                    fontFamily = Manrope,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
-                )
-            }
             BasicTextField(
+                // fillMaxWidth makes the field itself the hit target across the
+                // pill; without it the touch area is only as wide as the text.
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = TextStyle(
@@ -101,7 +110,21 @@ fun AuthTextField(
                     VisualTransformation.None
                 },
                 singleLine = true,
-                cursorBrush = SolidColor(Color.White)
+                cursorBrush = SolidColor(Color.White),
+                decorationBox = { innerTextField ->
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        if (value.isEmpty() && placeholder.isNotEmpty()) {
+                            Text(
+                                text = placeholder,
+                                color = Color.White.copy(alpha = 0.55f),
+                                fontFamily = Manrope,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 14.sp,
+                            )
+                        }
+                        innerTextField()
+                    }
+                },
             )
         }
         error?.let { text ->

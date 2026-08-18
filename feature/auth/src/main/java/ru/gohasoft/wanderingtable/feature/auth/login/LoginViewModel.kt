@@ -6,10 +6,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
+import ru.gohasoft.wanderingtable.core.domain.isSuccessOrError
 import ru.gohasoft.wanderingtable.core.domain.orUnknownErrorResult
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
 import ru.gohasoft.wanderingtable.core.presentation.navigation.AppEntryScreens
@@ -59,7 +61,7 @@ internal class LoginViewModel @Inject constructor(
 
     private fun tryToLogIn() {
         val email = _state.value.email
-        val password = _state.value.password
+        val password = _state.value.password.trim()
         val emailError = AuthValidator.validateEmail(email)
         val passwordError = AuthValidator.validateLoginPassword(password)
         if (emailError != null || passwordError != null) {
@@ -70,23 +72,23 @@ internal class LoginViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            val result = authRepository.logIn(email, password)
-                .firstSuccessOrErrorResult()
-                .orUnknownErrorResult()
-            when (result) {
-                is Result.Loading ->
-                    updateState(
-                        isLoading = true,
-                        generalError = null
-                    )
-                is Result.Success ->
-                    navigateToHomeScreen()
-                is Result.Error ->
-                    updateState(
-                        isLoading = false,
-                        generalError = result.error.toLoginFieldError()
-                    )
-            }
+            authRepository.logIn(email, password)
+                .firstSuccessOrErrorResult { result ->
+                    when (result) {
+                        is Result.Loading ->
+                            updateState(
+                                isLoading = true,
+                                generalError = null
+                            )
+                        is Result.Success ->
+                            navigateToHomeScreen()
+                        is Result.Error ->
+                            updateState(
+                                isLoading = false,
+                                generalError = result.error.toLoginFieldError()
+                            )
+                    }
+                }
         }
     }
 

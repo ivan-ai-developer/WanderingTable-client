@@ -2,21 +2,26 @@ package ru.gohasoft.wanderingtable.feature.auth.signup
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.exception.UnknownException
 import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
+import ru.gohasoft.wanderingtable.core.domain.isSuccessOrError
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
 import ru.gohasoft.wanderingtable.core.presentation.navigation.AppEntryScreens
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.Back
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.NewRoot
 import ru.gohasoft.wanderingtable.core.presentation.navigation.router.Router
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
+import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource.StringResource
 import ru.gohasoft.wanderingtable.core.presentation.viewmodel.MviViewModel
 import ru.gohasoft.wanderingtable.feature.auth.R
 import ru.gohasoft.wanderingtable.feature.auth.signup.SignUpEvent.OnConfirmPasswordChanged
@@ -56,13 +61,11 @@ internal class SignUpViewModel @Inject constructor(
                 passwordError = null,
                 generalError = null
             )
-            is OnConfirmPasswordChanged -> _state.update {
-                it.copy(
-                    confirmPassword = event.value,
-                    confirmPasswordError = null,
-                    generalError = null
-                )
-            }
+            is OnConfirmPasswordChanged -> updateState(
+                confirmPassword = event.value,
+                confirmPasswordError = null,
+                generalError = null
+            )
             OnSignUpClick -> tryToSignUp()
             OnLoginClick -> navigateBack()
         }
@@ -78,7 +81,7 @@ internal class SignUpViewModel @Inject constructor(
         val emailError = AuthValidator.validateEmail(email)
         val passwordError = AuthValidator.validatePassword(password)
         val confirmPasswordError = if (password != confirmPassword) {
-            TextResource.StringResource(R.string.signup_error_password_mismatch)
+            StringResource(R.string.signup_error_password_mismatch)
         } else {
             null
         }
@@ -97,25 +100,25 @@ internal class SignUpViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val result = authRepository.signUp(
+            authRepository.signUp(
                 name = name,
                 email = email,
                 password = password
-            ).firstSuccessOrErrorResult()
-                ?: Result.Error(UnknownException())
-            when (result) {
-                is Result.Loading ->
-                    updateState(
-                        isLoading = true,
-                        generalError = null
-                    )
-                is Result.Success ->
-                    router.execute(NewRoot(appEntryScreens.home()))
-                is Result.Error ->
-                    updateState(
-                        isLoading = false,
-                        generalError = result.error.toSignUpFieldError()
-                    )
+            ).firstSuccessOrErrorResult { result ->
+                when (result) {
+                    is Result.Loading ->
+                        updateState(
+                            isLoading = true,
+                            generalError = null
+                        )
+                    is Result.Success ->
+                        router.execute(NewRoot(appEntryScreens.home()))
+                    is Result.Error ->
+                        updateState(
+                            isLoading = false,
+                            generalError = result.error.toSignUpFieldError()
+                        )
+                }
             }
         }
     }

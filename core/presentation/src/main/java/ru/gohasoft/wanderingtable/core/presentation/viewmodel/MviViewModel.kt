@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import ru.gohasoft.wanderingtable.core.domain.Result
 
 /**
  * Base MVI ViewModel: a single [state], user-triggered [onEvent]s, and one-time

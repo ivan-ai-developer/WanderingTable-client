@@ -18,7 +18,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.WanderingTable"
+            android:theme="@style/Theme.WanderingTable.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

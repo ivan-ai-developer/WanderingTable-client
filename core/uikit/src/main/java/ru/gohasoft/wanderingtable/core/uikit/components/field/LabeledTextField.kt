@@ -3,6 +3,8 @@ package ru.gohasoft.wanderingtable.core.uikit.components.field
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +42,9 @@ fun LabeledTextField(
     modifier: Modifier = Modifier,
 ) {
     val extended = MaterialTheme.extendedColors
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label.uppercase(),
@@ -54,10 +61,21 @@ fun LabeledTextField(
                 .height(50.dp)
                 .background(extended.tint, RoundedCornerShape(WanderingTableRadius.m))
                 .border(2.dp, extended.tintBorder, RoundedCornerShape(WanderingTableRadius.m))
+                // Before the horizontal padding, so the whole pill — padding
+                // included — focuses the field on tap.
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                ) { focusRequester.requestFocus() }
                 .padding(horizontal = WanderingTableSpacing.m),
             contentAlignment = Alignment.CenterStart,
         ) {
             BasicTextField(
+                // fillMaxWidth makes the field itself the hit target across the
+                // pill; without it the touch area is only as wide as the text.
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = TextStyle(

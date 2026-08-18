@@ -32,10 +32,23 @@ fun <T> Flow<Result<T>>.onFailure(
 fun <T> Flow<Result<T>>.asEmptyResult(): Flow<Result<Unit>> = mapData { }
 
 suspend fun <T> Flow<Result<T>>.firstSuccessOrErrorResult(): Result<T>? =
-    firstOrNull { result -> result.isSuccess || result.isError }
+    firstOrNull { result -> result.isSuccessOrError }
+
+suspend fun <T> Flow<Result<T>>.firstSuccessOrErrorResult(
+    action: (Result<T>) -> Unit
+) = firstOrNull { result ->
+    action(result)
+    result.isSuccessOrError
+}
 
 suspend fun <T> Flow<Result<T>>.firstSuccessOrErrorData(): T? =
-    firstOrNull { result -> result.isSuccess || result.isError }?.data
+    firstSuccessOrErrorResult()?.data
+
+suspend fun <T> Flow<Result<T>>.firstSuccessOrErrorData(
+    action: (T?) -> Unit
+) = firstSuccessOrErrorResult { result ->
+    action(result.data)
+}?.data
 
 fun <T> Result<T>?.orUnknownErrorResult(
     message: String = "something went wrong"

@@ -22,3 +22,6 @@ sealed class Result<out T> {
         override val isLoading: Boolean = true
     }
 }
+
+val <T> Result<T>.isSuccessOrError: Boolean
+    get() = isSuccess || isError

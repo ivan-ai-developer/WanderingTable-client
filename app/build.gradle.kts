@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":data:auth"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)

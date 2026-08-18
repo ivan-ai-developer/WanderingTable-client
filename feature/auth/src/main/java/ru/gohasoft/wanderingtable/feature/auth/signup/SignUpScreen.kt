@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,9 +59,14 @@ private fun SignUpContent(
     GradientBackground(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth()
-                .padding(WanderingTableSpacing.l)
+                // safeDrawing (system bars + cutout + IME) must be applied BEFORE
+                // verticalScroll so the keyboard shrinks the scroll viewport and the
+                // focused field is scrolled into view instead of being covered.
+                .fillMaxSize()
+                .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(WanderingTableSpacing.l),
+            verticalArrangement = Arrangement.Center,
         ) {
 
             Icon(

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,9 +42,13 @@ private fun WelcomeContent(
     GradientBackground(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
+                .fillMaxSize()
+                .safeDrawingPadding()
                 .padding(WanderingTableSpacing.l),
-            verticalArrangement = Arrangement.spacedBy(WanderingTableSpacing.l),
+            verticalArrangement = Arrangement.spacedBy(
+                space = WanderingTableSpacing.l,
+                alignment = Alignment.CenterVertically,
+            ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
