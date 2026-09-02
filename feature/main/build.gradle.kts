@@ -13,6 +13,8 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
     implementation(project(":core:uikit"))
+    // For the POST_NOTIFICATIONS runtime prompt on the Notifications screen.
+    implementation(libs.androidx.activity.compose)
 
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)

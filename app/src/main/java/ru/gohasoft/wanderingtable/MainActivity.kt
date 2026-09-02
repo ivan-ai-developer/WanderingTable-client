@@ -45,8 +45,14 @@ class MainActivity : ComponentActivity() {
         // Every screen so far sits on the dark purple gradient, so the bar icons are
         // forced light. Move this to per-screen control once light screens land.
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
+            statusBarStyle = SystemBarStyle.auto(
+                AndroidColor.TRANSPARENT,
+                AndroidColor.TRANSPARENT,
+            ),
+            navigationBarStyle = SystemBarStyle.auto(
+                AndroidColor.TRANSPARENT,
+                AndroidColor.TRANSPARENT,
+            ),
         )
         setContent {
             WanderingTableTheme {

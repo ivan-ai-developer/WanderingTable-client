@@ -1,7 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="welcome_title">Wandering Table</string>
-    <string name="welcome_subtitle">Find opponents, host games, join the club.</string>
-    <string name="welcome_signed_in_as">Signed in as %1$s</string>
-    <string name="welcome_logout_button">Log Out</string>
+    <string name="app_title">Wandering Table</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_games">Games</string>
+    <string name="nav_create">Create</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Shared actions and errors -->
+    <string name="main_action_retry">Retry</string>
+    <string name="main_action_back">Back</string>
+    <string name="main_action_confirm">OK</string>
+    <string name="main_action_cancel">Cancel</string>
+    <string name="main_error_generic">Something went wrong. Please try again.</string>
+    <string name="main_error_no_internet">No internet connection.</string>
+    <string name="main_error_not_found">This is no longer available.</string>
+    <string name="main_error_session_expired">Your session expired. Please sign in again.</string>
+
+    <!-- Relative timestamps -->
+    <string name="relative_just_now">Just now</string>
+    <string name="relative_minutes_ago">%1$sm ago</string>
+    <string name="relative_hours_ago">%1$sh ago</string>
+    <string name="relative_yesterday">Yesterday</string>
+    <string name="relative_days_ago">%1$s days ago</string>
+
+    <!-- Home -->
+    <string name="home_notifications_action">Notifications</string>
+    <string name="home_hero_eyebrow">Your next game</string>
+    <string name="home_news_title">Club News</string>
+    <string name="home_news_see_all">See all</string>
+    <string name="home_error_title">Could not load the feed</string>
+    <string name="home_no_upcoming_title">No games coming up</string>
+    <string name="home_no_upcoming_subtitle">Join one from the Games tab, or post your own request.</string>
+    <string name="home_no_news_title">No club news yet</string>
+    <string name="home_no_news_subtitle">Announcements from the club will show up here.</string>
+
+    <!-- Games -->
+    <string name="games_title">Games</string>
+    <string name="games_filter_all">All</string>
+    <string name="games_filter_open_requests">Open Requests</string>
+    <string name="games_filter_my_games">My Games</string>
+    <string name="games_join_action">Join Game</string>
+    <string name="games_joined_message">You are in. See you at the table!</string>
+    <string name="games_hosted_by_you">Hosted by you</string>
+    <string name="games_hosted_by_member">Hosted by a club member</string>
+    <string name="games_skill_any">Any level</string>
+    <string name="games_card_meta">%1$s · needs %2$s of %3$s</string>
+    <string name="games_error_title">Could not load games</string>
+    <string name="games_empty_title">Nothing here yet</string>
+    <string name="games_empty_all">No games are planned at the club right now.</string>
+    <string name="games_empty_open_requests">Every planned game is full or already yours.</string>
+    <string name="games_empty_my_games">You have not joined or hosted a game yet.</string>
+
+    <!-- Game detail -->
+    <string name="game_detail_error_title">Could not load this game</string>
+    <string name="game_detail_label_date_time">Date &amp; time</string>
+    <string name="game_detail_label_location">Location</string>
+    <string name="game_detail_label_players">Players</string>
+    <string name="game_detail_label_note">Note from host</string>
+    <string name="game_detail_location_club">At the club</string>
+    <string name="game_detail_players_joined">%1$s of %2$s joined</string>
+    <string name="game_detail_leave_action">Leave Game</string>
+    <string name="game_detail_cancel_action">Cancel Game</string>
+    <string name="game_detail_no_action">This game is closed for changes.</string>
+    <string name="game_detail_left_message">You left the game.</string>
+    <string name="game_detail_cancelled_message">Game cancelled.</string>
+    <string name="game_detail_error_join_conflict">You cannot join: the game is full, already started, or you are already in.</string>
+    <string name="game_detail_error_leave_conflict">You cannot leave: the game already started, or you are its host.</string>
+    <string name="game_detail_error_cancel_conflict">This game is already finished or cancelled.</string>
+    <string name="game_detail_error_not_yours">Only the host can do that.</string>
+
+    <!-- Create sheet -->
+    <string name="create_sheet_title">What do you want to create?</string>
+    <string name="create_sheet_news_title">Post Club News</string>
+    <string name="create_sheet_news_subtitle">Share an announcement or event</string>
+    <string name="create_sheet_opponent_title">Find an Opponent</string>
+    <string name="create_sheet_opponent_subtitle">Post a request to play a game</string>
+    <string name="create_sheet_cancel">Cancel</string>
+    <string name="create_sheet_game_title">Add a Game</string>
+    <string name="create_sheet_game_subtitle">Put a board game in the club catalogue</string>
+
+    <!-- Create game -->
+    <string name="create_game_title">Add a Game</string>
+    <string name="create_game_label_name">Name</string>
+    <string name="create_game_label_description">Description</string>
+    <string name="create_game_description_placeholder">What is this game about?</string>
+    <string name="create_game_label_min_players">Min players</string>
+    <string name="create_game_label_max_players">Max players</string>
+    <string name="create_game_label_result_type">How results are recorded</string>
+    <string name="create_game_result_win_loss">Win / loss</string>
+    <string name="create_game_result_points">Points</string>
+    <string name="create_game_result_placement">Places</string>
+    <string name="create_game_result_win_loss_hint">Each player is recorded as a win, a loss or a draw.</string>
+    <string name="create_game_result_points_hint">Each player reports a score; the highest one wins.</string>
+    <string name="create_game_result_placement_hint">Each player reports a place; first place wins.</string>
+    <string name="create_game_submit">Add Game</string>
+    <string name="create_game_added">Added to the catalogue.</string>
+    <string name="create_game_error_no_name">A name is required.</string>
+    <string name="create_game_error_name_taken">The club already has a game with that name.</string>
+    <string name="create_game_error_forbidden">You no longer have permission to add games.</string>
+    <string name="create_game_error_bad_request">The server rejected this game. Check the player counts.</string>
+
+    <!-- Create request -->
+    <string name="create_request_title">Find an Opponent</string>
+    <string name="create_request_label_game">Game</string>
+    <string name="create_request_label_date">Date</string>
+    <string name="create_request_label_time">Time</string>
+    <string name="create_request_label_players">Players needed</string>
+    <string name="create_request_label_skill">Skill level</string>
+    <string name="create_request_label_table">Table / location</string>
+    <string name="create_request_label_note">Note (optional)</string>
+    <string name="create_request_note_placeholder">First time playing this one, happy to learn the rules together.</string>
+    <string name="create_request_skill_beginner">Beginner</string>
+    <string name="create_request_skill_any">Any</string>
+    <string name="create_request_skill_expert">Expert</string>
+    <string name="create_request_table_picker_title">Pick a table</string>
+    <string name="create_request_submit">Post Request</string>
+    <string name="create_request_posted">Your request is live.</string>
+    <string name="create_request_error_no_game">Pick a game first.</string>
+    <string name="create_request_error_player_bounds">This game is for %1$s to %2$s players.</string>
+    <string name="create_request_error_bad_bounds">That number of players does not fit this game.</string>
+    <string name="create_request_error_unknown_game">That game is no longer in the catalogue.</string>
+
+    <!-- Create news -->
+    <string name="create_news_title">Post Club News</string>
+    <string name="create_news_label_title">Headline</string>
+    <string name="create_news_label_content">Story</string>
+    <string name="create_news_content_placeholder">What should the club know?</string>
+    <string name="create_news_submit">Publish</string>
+    <string name="create_news_posted">Your post is live.</string>
+    <string name="create_news_error_no_title">A headline is required.</string>
+    <string name="create_news_error_forbidden">You no longer have permission to post club news.</string>
+    <string name="create_news_error_bad_request">The server rejected this post. Check the headline.</string>
+
+    <!-- News detail -->
+    <string name="news_detail_error_title">Could not load this post</string>
+    <string name="news_detail_cover_placeholder">cover photo</string>
+    <string name="news_byline_you">Posted %1$s · by you</string>
+    <string name="news_byline_club">Posted %1$s · by the club</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_group_today">Today</string>
+    <string name="notifications_group_earlier">Earlier</string>
+    <string name="notifications_empty_title">Nothing yet</string>
+    <string name="notifications_empty_subtitle">Club updates and game reminders will land here.</string>
+
+    <!-- Notification settings -->
+    <string name="notification_settings_title">Notification Settings</string>
+    <string name="notification_settings_push_title">Push notifications</string>
+    <string name="notification_settings_push_subtitle">Turn all app notifications on or off</string>
+    <string name="notification_settings_section_activity">Activity</string>
+    <string name="notification_settings_invites">Game invites &amp; opponent matches</string>
+    <string name="notification_settings_news">Club news &amp; announcements</string>
+    <string name="notification_settings_reminders">Game &amp; table reminders</string>
+    <string name="notification_settings_section_watched">Notify me when someone opens a request for</string>
+    <string name="notification_settings_add_game">+ Add another game</string>
+    <string name="notification_settings_picker_title">Pick a game</string>
+
+    <!-- Profile -->
+    <string name="profile_error_title">Could not load your profile</string>
+    <string name="profile_stat_games">Games</string>
+    <string name="profile_stat_wins">Wins</string>
+    <string name="profile_stat_level">Level</string>
+    <string name="profile_favourite_games">%1$s favourite games</string>
+    <string name="profile_level_newcomer">Newcomer</string>
+    <string name="profile_level_regular">Regular</string>
+    <string name="profile_level_strategist">Strategist</string>
+    <string name="profile_level_master">Master</string>
+    <string name="profile_menu_my_games">My Games</string>
+    <string name="profile_menu_opponent_requests">Find Opponent Requests</string>
+    <string name="profile_menu_notification_settings">Notification Settings</string>
+    <string name="profile_menu_club_admin">Club Administration</string>
+
+    <!-- Club administration -->
+    <string name="club_admin_title">Club Administration</string>
+    <string name="club_admin_error_title">Could not load your account</string>
+    <string name="club_admin_section_my_roles">Your roles</string>
+    <string name="club_admin_my_roles_hint">Being club manager does not grant these — turn on what you need.</string>
+    <string name="club_admin_section_grant">Grant a role to a member</string>
+    <string name="club_admin_label_email">Member email</string>
+    <string name="club_admin_search">Find member</string>
+    <string name="club_admin_clear">Clear</string>
+    <string name="club_admin_roles_saved">Roles saved.</string>
+    <string name="club_admin_role_player">Player</string>
+    <string name="club_admin_role_player_hint">Join events and post game requests.</string>
+    <string name="club_admin_role_news_creator">News creator</string>
+    <string name="club_admin_role_news_creator_hint">Publish club news.</string>
+    <string name="club_admin_role_game_creator">Game creator</string>
+    <string name="club_admin_role_game_creator_hint">Add board games to the catalogue.</string>
+    <string name="club_admin_role_tournament_creator">Tournament creator</string>
+    <string name="club_admin_role_tournament_creator_hint">Create tournaments, championships and leagues.</string>
+    <string name="club_admin_role_club_manager">Club manager</string>
+    <string name="club_admin_role_club_manager_hint">Grant roles, manage any event. You cannot remove this from yourself.</string>
+    <string name="club_admin_error_no_such_member">No club member uses that email.</string>
+    <string name="club_admin_error_forbidden">Only a club manager can do that.</string>
+    <string name="club_admin_error_last_manager">The club must keep at least one manager, and you cannot remove the role from yourself.</string>
+    <string name="club_admin_error_bad_role">The server did not recognise that role.</string>
+    <string name="profile_menu_account_settings">Account Settings</string>
+    <string name="profile_menu_club_membership">Club Membership</string>
+    <string name="profile_menu_log_out">Log Out</string>
+    <string name="profile_not_available_yet">Not available yet.</string>
 </resources>

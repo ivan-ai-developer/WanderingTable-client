@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Кочующий стол</string>
+    <string name="push_channel_name">Новости клуба</string>
+    <string name="push_channel_description">Напоминания о партиях, найденные оппоненты и новости клуба.</string>
 </resources>

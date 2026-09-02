@@ -1,6 +1,7 @@
 package ru.gohasoft.wanderingtable.core.presentation.navigation.nav3
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -52,8 +53,12 @@ fun NavigationHost(
                 modifier = Modifier.safeDrawingPadding(),
             )
         },
-    ) { _ ->
+    ) { contentPadding ->
         NavDisplay(
+            // Zero today — this Scaffold has no bars and no content insets — but applied rather
+            // than dropped so the host still behaves if a bar is ever added here. Window insets
+            // are deliberately not part of it; screens apply those themselves.
+            modifier = Modifier.padding(contentPadding),
             backStack = backStack,
             onBack = { router.execute(Back()) },
             entryDecorators = listOf(

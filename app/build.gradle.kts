@@ -3,6 +3,16 @@ plugins {
     alias(libs.plugins.wanderingtable.compose)
     alias(libs.plugins.wanderingtable.hilt)
     alias(libs.plugins.kotlin.serialization)
+    // Brought onto the classpath but not applied: the plugin fails the build outright when
+    // google-services.json is missing, and this app must still build and run without push.
+    alias(libs.plugins.google.services) apply false
+}
+
+// Push is opt-in per checkout: drop your google-services.json into app/ and Firebase wires
+// itself up on the next build. Without it the messaging SDK stays inert and
+// FirebasePushTokenProvider reports no token, which every caller already handles.
+if (project.file("google-services.json").exists()) {
+    apply(plugin = libs.plugins.google.services.get().pluginId)
 }
 
 android {
@@ -30,10 +40,14 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":feature:main"))
     implementation(project(":data:auth"))
+    implementation(project(":data:main"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+    implementation(libs.kotlinx.coroutines.play.services)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)

@@ -3,15 +3,19 @@ package ru.gohasoft.wanderingtable.core.uikit.components.card
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -23,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.gohasoft.wanderingtable.core.uikit.components.avatar.StackedAvatarGroup
 import ru.gohasoft.wanderingtable.core.uikit.theme.BarlowCondensed
 import ru.gohasoft.wanderingtable.core.uikit.theme.Manrope
 import ru.gohasoft.wanderingtable.core.uikit.theme.Purple800
@@ -32,6 +37,10 @@ import ru.gohasoft.wanderingtable.core.uikit.theme.WanderingTableSpacing
 import ru.gohasoft.wanderingtable.core.uikit.theme.WanderingTableTheme
 import ru.gohasoft.wanderingtable.core.uikit.theme.extendedColors
 
+/**
+ * The "your next game" card at the top of Home. [content] is the slot the participants row goes
+ * into, so the card stays unaware of how players are rendered.
+ */
 @Composable
 fun HeroCard(
     eyebrow: String,
@@ -39,18 +48,25 @@ fun HeroCard(
     meta: String,
     modifier: Modifier = Modifier,
     watermark: Painter? = null,
+    onClick: (() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val extended = MaterialTheme.extendedColors
+    var cardModifier = modifier
+        .background(
+            Brush.linearGradient(colors = listOf(Purple800, Purple900)),
+            RoundedCornerShape(WanderingTableRadius.l + 2.dp),
+        )
+    if (onClick != null) {
+        cardModifier = cardModifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick,
+        )
+    }
+
     Column(
-        modifier = modifier
-            .width(300.dp)
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(Purple800, Purple900),
-                ),
-                RoundedCornerShape(WanderingTableRadius.l + 2.dp),
-            )
-            .padding(20.dp),
+        modifier = cardModifier.padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (watermark != null) {
@@ -84,6 +100,7 @@ fun HeroCard(
             fontWeight = FontWeight.SemiBold,
             fontSize = 13.sp,
         )
+        content()
     }
 }
 
@@ -98,10 +115,13 @@ private fun HeroCardPreview() {
                 .padding(WanderingTableSpacing.m),
         ) {
             HeroCard(
-                eyebrow = "Featured game",
+                modifier = Modifier.fillMaxWidth(),
+                eyebrow = "Your next game",
                 title = "Terraforming Mars",
-                meta = "Wed · 6:30 PM · 4 players",
-            )
+                meta = "Jul 14 · 2:00 PM",
+            ) {
+                StackedAvatarGroup(initials = listOf("MR", "DK"), extraCount = 0)
+            }
         }
     }
 }

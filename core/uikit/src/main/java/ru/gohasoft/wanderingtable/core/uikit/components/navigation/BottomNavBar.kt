@@ -66,7 +66,7 @@ fun BottomNavBar(
             )
             .background(Purple900, RoundedCornerShape(22.dp))
             .padding(horizontal = 10.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         items.forEachIndexed { index, item ->

@@ -1,11 +1,14 @@
 package ru.gohasoft.wanderingtable.core.domain.model.game
 
-open class Game(
+/**
+ * A board game in the club catalogue ("Carcassonne"), not a single play of it — that is
+ * [ru.gohasoft.wanderingtable.core.domain.model.event.GameEvent].
+ */
+data class Game(
     val id: String,
-    val title: String,
+    val name: String,
     val description: String?,
-    val imageUrl: String?,
     val minPlayers: Int?,
     val maxPlayers: Int?,
-    val duration: Long?
+    val resultType: GameResultType,
 )

@@ -1,7 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="welcome_title">Кочующий стол</string>
-    <string name="welcome_subtitle">Находите соперников, проводите игры, вступайте в клуб.</string>
-    <string name="welcome_signed_in_as">Вы вошли как %1$s</string>
-    <string name="welcome_logout_button">Выйти</string>
+    <string name="app_title">Wandering Table</string>
+
+    <!-- Нижняя навигация -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_games">Игры</string>
+    <string name="nav_create">Создать</string>
+    <string name="nav_profile">Профиль</string>
+
+    <!-- Общие действия и ошибки -->
+    <string name="main_action_retry">Повторить</string>
+    <string name="main_action_back">Назад</string>
+    <string name="main_action_confirm">ОК</string>
+    <string name="main_action_cancel">Отмена</string>
+    <string name="main_error_generic">Что-то пошло не так. Попробуйте ещё раз.</string>
+    <string name="main_error_no_internet">Нет подключения к интернету.</string>
+    <string name="main_error_not_found">Этого больше нет.</string>
+    <string name="main_error_session_expired">Сессия истекла. Войдите заново.</string>
+
+    <!-- Относительное время -->
+    <string name="relative_just_now">Только что</string>
+    <string name="relative_minutes_ago">%1$s мин назад</string>
+    <string name="relative_hours_ago">%1$s ч назад</string>
+    <string name="relative_yesterday">Вчера</string>
+    <string name="relative_days_ago">%1$s дн назад</string>
+
+    <!-- Главная -->
+    <string name="home_notifications_action">Уведомления</string>
+    <string name="home_hero_eyebrow">Ваша ближайшая партия</string>
+    <string name="home_news_title">Новости клуба</string>
+    <string name="home_news_see_all">Все новости</string>
+    <string name="home_error_title">Не удалось загрузить ленту</string>
+    <string name="home_no_upcoming_title">Ближайших партий нет</string>
+    <string name="home_no_upcoming_subtitle">Присоединитесь к партии во вкладке «Игры» или создайте свою заявку.</string>
+    <string name="home_no_news_title">Новостей пока нет</string>
+    <string name="home_no_news_subtitle">Объявления клуба появятся здесь.</string>
+
+    <!-- Игры -->
+    <string name="games_title">Игры</string>
+    <string name="games_filter_all">Все</string>
+    <string name="games_filter_open_requests">Открытые заявки</string>
+    <string name="games_filter_my_games">Мои партии</string>
+    <string name="games_join_action">Присоединиться</string>
+    <string name="games_joined_message">Вы в игре. До встречи за столом!</string>
+    <string name="games_hosted_by_you">Организатор — вы</string>
+    <string name="games_hosted_by_member">Организатор — участник клуба</string>
+    <string name="games_skill_any">Любой уровень</string>
+    <string name="games_card_meta">%1$s · нужно ещё %2$s из %3$s</string>
+    <string name="games_error_title">Не удалось загрузить партии</string>
+    <string name="games_empty_title">Пока пусто</string>
+    <string name="games_empty_all">Запланированных партий в клубе сейчас нет.</string>
+    <string name="games_empty_open_requests">Все запланированные партии заполнены или ваши.</string>
+    <string name="games_empty_my_games">Вы ещё не создавали партий и ни к одной не присоединились.</string>
+
+    <!-- Детали партии -->
+    <string name="game_detail_error_title">Не удалось загрузить партию</string>
+    <string name="game_detail_label_date_time">Дата и время</string>
+    <string name="game_detail_label_location">Место</string>
+    <string name="game_detail_label_players">Игроки</string>
+    <string name="game_detail_label_note">Заметка организатора</string>
+    <string name="game_detail_location_club">В клубе</string>
+    <string name="game_detail_players_joined">%1$s из %2$s набрано</string>
+    <string name="game_detail_leave_action">Выйти из партии</string>
+    <string name="game_detail_cancel_action">Отменить партию</string>
+    <string name="game_detail_no_action">Эту партию больше нельзя изменить.</string>
+    <string name="game_detail_left_message">Вы вышли из партии.</string>
+    <string name="game_detail_cancelled_message">Партия отменена.</string>
+    <string name="game_detail_error_join_conflict">Не получилось: мест нет, партия уже началась или вы уже участник.</string>
+    <string name="game_detail_error_leave_conflict">Не получилось: партия уже началась или вы её организатор.</string>
+    <string name="game_detail_error_cancel_conflict">Партия уже завершена или отменена.</string>
+    <string name="game_detail_error_not_yours">Это может сделать только организатор.</string>
+
+    <!-- Шит создания -->
+    <string name="create_sheet_title">Что создаём?</string>
+    <string name="create_sheet_news_title">Опубликовать новость</string>
+    <string name="create_sheet_news_subtitle">Поделиться объявлением или событием</string>
+    <string name="create_sheet_opponent_title">Найти оппонента</string>
+    <string name="create_sheet_opponent_subtitle">Создать заявку на партию</string>
+    <string name="create_sheet_cancel">Отмена</string>
+    <string name="create_sheet_game_title">Добавить игру</string>
+    <string name="create_sheet_game_subtitle">Внести настолку в справочник клуба</string>
+
+    <!-- Добавление игры -->
+    <string name="create_game_title">Добавить игру</string>
+    <string name="create_game_label_name">Название</string>
+    <string name="create_game_label_description">Описание</string>
+    <string name="create_game_description_placeholder">О чём эта игра?</string>
+    <string name="create_game_label_min_players">Минимум игроков</string>
+    <string name="create_game_label_max_players">Максимум игроков</string>
+    <string name="create_game_label_result_type">Как считать результат</string>
+    <string name="create_game_result_win_loss">Победа / поражение</string>
+    <string name="create_game_result_points">Очки</string>
+    <string name="create_game_result_placement">Места</string>
+    <string name="create_game_result_win_loss_hint">У каждого игрока записывается победа, поражение или ничья.</string>
+    <string name="create_game_result_points_hint">Каждый игрок сообщает очки; побеждает набравший больше всех.</string>
+    <string name="create_game_result_placement_hint">Каждый игрок сообщает место; побеждает первое.</string>
+    <string name="create_game_submit">Добавить игру</string>
+    <string name="create_game_added">Игра добавлена в справочник.</string>
+    <string name="create_game_error_no_name">Название обязательно.</string>
+    <string name="create_game_error_name_taken">Игра с таким названием уже есть в клубе.</string>
+    <string name="create_game_error_forbidden">У вас больше нет прав добавлять игры.</string>
+    <string name="create_game_error_bad_request">Сервер отклонил игру. Проверьте число игроков.</string>
+
+    <!-- Заявка на партию -->
+    <string name="create_request_title">Найти оппонента</string>
+    <string name="create_request_label_game">Игра</string>
+    <string name="create_request_label_date">Дата</string>
+    <string name="create_request_label_time">Время</string>
+    <string name="create_request_label_players">Нужно игроков</string>
+    <string name="create_request_label_skill">Уровень</string>
+    <string name="create_request_label_table">Стол</string>
+    <string name="create_request_label_note">Заметка (необязательно)</string>
+    <string name="create_request_note_placeholder">Играю впервые, с радостью разберу правила вместе.</string>
+    <string name="create_request_skill_beginner">Новичок</string>
+    <string name="create_request_skill_any">Любой</string>
+    <string name="create_request_skill_expert">Опытный</string>
+    <string name="create_request_table_picker_title">Выберите стол</string>
+    <string name="create_request_submit">Создать заявку</string>
+    <string name="create_request_posted">Заявка опубликована.</string>
+    <string name="create_request_error_no_game">Сначала выберите игру.</string>
+    <string name="create_request_error_player_bounds">Эта игра рассчитана на %1$s–%2$s игроков.</string>
+    <string name="create_request_error_bad_bounds">Такое число игроков не подходит для этой игры.</string>
+    <string name="create_request_error_unknown_game">Этой игры больше нет в справочнике.</string>
+
+    <!-- Публикация новости -->
+    <string name="create_news_title">Новость клуба</string>
+    <string name="create_news_label_title">Заголовок</string>
+    <string name="create_news_label_content">Текст</string>
+    <string name="create_news_content_placeholder">Что стоит рассказать клубу?</string>
+    <string name="create_news_submit">Опубликовать</string>
+    <string name="create_news_posted">Новость опубликована.</string>
+    <string name="create_news_error_no_title">Заголовок обязателен.</string>
+    <string name="create_news_error_forbidden">У вас больше нет прав публиковать новости.</string>
+    <string name="create_news_error_bad_request">Сервер отклонил новость. Проверьте заголовок.</string>
+
+    <!-- Детали новости -->
+    <string name="news_detail_error_title">Не удалось загрузить новость</string>
+    <string name="news_detail_cover_placeholder">обложка</string>
+    <string name="news_byline_you">Опубликовано %1$s · вами</string>
+    <string name="news_byline_club">Опубликовано %1$s · клубом</string>
+
+    <!-- Уведомления -->
+    <string name="notifications_title">Уведомления</string>
+    <string name="notifications_group_today">Сегодня</string>
+    <string name="notifications_group_earlier">Ранее</string>
+    <string name="notifications_empty_title">Пока пусто</string>
+    <string name="notifications_empty_subtitle">Здесь появятся новости клуба и напоминания о партиях.</string>
+
+    <!-- Настройки уведомлений -->
+    <string name="notification_settings_title">Настройки уведомлений</string>
+    <string name="notification_settings_push_title">Push-уведомления</string>
+    <string name="notification_settings_push_subtitle">Включить или выключить все уведомления</string>
+    <string name="notification_settings_section_activity">Активность</string>
+    <string name="notification_settings_invites">Приглашения и найденные оппоненты</string>
+    <string name="notification_settings_news">Новости и объявления клуба</string>
+    <string name="notification_settings_reminders">Напоминания о партиях</string>
+    <string name="notification_settings_section_watched">Сообщать, когда создают заявку на</string>
+    <string name="notification_settings_add_game">+ Добавить игру</string>
+    <string name="notification_settings_picker_title">Выберите игру</string>
+
+    <!-- Профиль -->
+    <string name="profile_error_title">Не удалось загрузить профиль</string>
+    <string name="profile_stat_games">Партий</string>
+    <string name="profile_stat_wins">Побед</string>
+    <string name="profile_stat_level">Уровень</string>
+    <string name="profile_favourite_games">Любимых игр: %1$s</string>
+    <string name="profile_level_newcomer">Новичок</string>
+    <string name="profile_level_regular">Завсегдатай</string>
+    <string name="profile_level_strategist">Стратег</string>
+    <string name="profile_level_master">Мастер</string>
+    <string name="profile_menu_my_games">Мои партии</string>
+    <string name="profile_menu_opponent_requests">Заявки на партии</string>
+    <string name="profile_menu_notification_settings">Настройки уведомлений</string>
+    <string name="profile_menu_club_admin">Администрирование клуба</string>
+
+    <!-- Администрирование клуба -->
+    <string name="club_admin_title">Администрирование клуба</string>
+    <string name="club_admin_error_title">Не удалось загрузить аккаунт</string>
+    <string name="club_admin_section_my_roles">Ваши роли</string>
+    <string name="club_admin_my_roles_hint">Роль заведующего сама по себе их не даёт — включите нужные.</string>
+    <string name="club_admin_section_grant">Выдать роль участнику</string>
+    <string name="club_admin_label_email">Email участника</string>
+    <string name="club_admin_search">Найти участника</string>
+    <string name="club_admin_clear">Сбросить</string>
+    <string name="club_admin_roles_saved">Роли сохранены.</string>
+    <string name="club_admin_role_player">Игрок</string>
+    <string name="club_admin_role_player_hint">Участие в событиях и создание заявок на партию.</string>
+    <string name="club_admin_role_news_creator">Автор новостей</string>
+    <string name="club_admin_role_news_creator_hint">Публикация новостей клуба.</string>
+    <string name="club_admin_role_game_creator">Автор игр</string>
+    <string name="club_admin_role_game_creator_hint">Добавление настолок в справочник.</string>
+    <string name="club_admin_role_tournament_creator">Организатор турниров</string>
+    <string name="club_admin_role_tournament_creator_hint">Создание турниров, чемпионатов и лиг.</string>
+    <string name="club_admin_role_club_manager">Заведующий клуба</string>
+    <string name="club_admin_role_club_manager_hint">Выдаёт роли, управляет любым событием. Снять с себя нельзя.</string>
+    <string name="club_admin_error_no_such_member">Участника с таким email в клубе нет.</string>
+    <string name="club_admin_error_forbidden">Это может сделать только заведующий клуба.</string>
+    <string name="club_admin_error_last_manager">В клубе должен остаться хотя бы один заведующий, и снять роль с себя нельзя.</string>
+    <string name="club_admin_error_bad_role">Сервер не распознал эту роль.</string>
+    <string name="profile_menu_account_settings">Настройки аккаунта</string>
+    <string name="profile_menu_club_membership">Членство в клубе</string>
+    <string name="profile_menu_log_out">Выйти</string>
+    <string name="profile_not_available_yet">Пока недоступно.</string>
 </resources>

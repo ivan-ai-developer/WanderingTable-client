@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,28 +34,46 @@ import ru.gohasoft.wanderingtable.core.uikit.theme.extendedColors
 
 enum class ListCardVariant { Outlined, Borderless, Highlighted }
 
+/**
+ * The card the Games list is built from. Callers size it — the Games screen stretches it to the
+ * full width, a horizontal rail would constrain it instead.
+ *
+ * [ctaText] is optional because a request you host has no action on it; that card uses
+ * [ListCardVariant.Highlighted] to read as yours.
+ */
 @Composable
 fun ListCard(
     title: String,
     meta: String,
-    ctaText: String,
-    onCtaClick: () -> Unit,
     modifier: Modifier = Modifier,
+    hostLine: String? = null,
+    ctaText: String? = null,
+    onCtaClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     variant: ListCardVariant = ListCardVariant.Borderless,
     badgeText: String? = null,
     badgeVariant: TagBadgeVariant = TagBadgeVariant.Gold,
 ) {
     val extended = MaterialTheme.extendedColors
     val shape = RoundedCornerShape(WanderingTableRadius.l)
-    val backgroundColor = if (variant == ListCardVariant.Highlighted) extended.goldTint else MaterialTheme.colorScheme.surface
+    val backgroundColor = if (variant == ListCardVariant.Highlighted) {
+        extended.goldTint
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
 
-    var cardModifier = modifier
-        .width(280.dp)
-        .background(backgroundColor, shape)
+    var cardModifier = modifier.background(backgroundColor, shape)
     cardModifier = when (variant) {
         ListCardVariant.Outlined -> cardModifier.dashedBorder(extended.tintBorder, WanderingTableRadius.l)
         ListCardVariant.Highlighted -> cardModifier.dashedBorder(extended.goldTintBorder, WanderingTableRadius.l)
         ListCardVariant.Borderless -> cardModifier
+    }
+    if (onClick != null) {
+        cardModifier = cardModifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick,
+        )
     }
 
     Column(
@@ -68,14 +85,27 @@ fun ListCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top,
         ) {
-            Text(
-                text = title,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = BarlowCondensed,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+            Column(
                 modifier = Modifier.weight(1f),
-            )
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = BarlowCondensed,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                )
+                if (hostLine != null) {
+                    Text(
+                        text = hostLine,
+                        color = extended.caption,
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                    )
+                }
+            }
             if (badgeText != null) {
                 TagBadge(text = badgeText, variant = badgeVariant, rotationDegrees = -3f)
             }
@@ -87,26 +117,28 @@ fun ListCard(
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(42.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(WanderingTableRadius.xl))
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onCtaClick,
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = ctaText.uppercase(),
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontFamily = BarlowCondensed,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 13.sp,
-                letterSpacing = 0.65.sp,
-            )
+        if (ctaText != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp)
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(WanderingTableRadius.xl))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onCtaClick,
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = ctaText.uppercase(),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontFamily = BarlowCondensed,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 13.sp,
+                    letterSpacing = 0.65.sp,
+                )
+            }
         }
     }
 }
@@ -116,25 +148,27 @@ fun ListCard(
 @Composable
 private fun ListCardPreview() {
     WanderingTableTheme {
-        Row(
+        Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .padding(WanderingTableSpacing.m),
-            horizontalArrangement = Arrangement.spacedBy(WanderingTableSpacing.m),
+            verticalArrangement = Arrangement.spacedBy(WanderingTableSpacing.m),
         ) {
             ListCard(
-                title = "Chess Night",
-                meta = "Fri · 7:00 PM · Table 3",
+                modifier = Modifier.fillMaxWidth(),
+                title = "Settlers of Catan",
+                hostLine = "Hosted by a club member",
+                meta = "Sat, Jul 12 · 7:00 PM · needs 1 of 2",
                 ctaText = "Join Game",
                 onCtaClick = {},
                 variant = ListCardVariant.Outlined,
                 badgeText = "Any level",
             )
             ListCard(
-                title = "Wingspan",
-                meta = "Sat · 2:00 PM · Table 1",
-                ctaText = "Join Game",
-                onCtaClick = {},
+                modifier = Modifier.fillMaxWidth(),
+                title = "Terraforming Mars",
+                hostLine = "Hosted by you",
+                meta = "Jul 14 · 2:00 PM · needs 1 of 3",
                 variant = ListCardVariant.Highlighted,
                 badgeText = "Expert",
                 badgeVariant = TagBadgeVariant.Purple800,

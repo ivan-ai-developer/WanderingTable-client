@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WanderingTable</string>
+    <string name="push_channel_name">Club updates</string>
+    <string name="push_channel_description">Game reminders, opponent matches and club news.</string>
 </resources>

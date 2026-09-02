@@ -33,6 +33,7 @@ include(
     ":core:uikit",
     ":feature:auth",
     ":feature:main",
-    ":data:auth"
+    ":data:auth",
+    ":data:main"
 )
 
