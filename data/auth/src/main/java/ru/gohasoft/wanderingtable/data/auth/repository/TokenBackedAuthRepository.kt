@@ -73,6 +73,17 @@ internal class TokenBackedAuthRepository @Inject constructor(
     override fun requestPasswordReset(email: String): Flow<Result<Unit>> =
         ResultFlow.onlineOnly { remoteDataSource.forgotPassword(email) }
 
+    override fun verifyPasswordResetCode(email: String, code: String): Flow<Result<String>> =
+        ResultFlow.onlineOnly { remoteDataSource.verifyResetCode(email, code) }
+
+    /**
+     * Nothing local changes: the server revokes every session, so a reset can only end on the login
+     * screen. Clearing the store here would additionally sign out whoever is signed in on this
+     * device — the reset may well have been started for a different account.
+     */
+    override fun resetPassword(resetToken: String, newPassword: String): Flow<Result<Unit>> =
+        ResultFlow.onlineOnly { remoteDataSource.resetPassword(resetToken, newPassword) }
+
     override fun getSession(): Flow<Result<Session>> =
         ResultFlow.offlineFirst(
             query = ::getSessionFromCache,

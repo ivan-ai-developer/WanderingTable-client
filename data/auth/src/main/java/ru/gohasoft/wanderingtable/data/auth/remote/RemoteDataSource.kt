@@ -9,7 +9,9 @@ import ru.gohasoft.wanderingtable.data.auth.remote.dto.ForgotPasswordRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.LoginRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.RefreshTokenRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.RegisterRequestDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetPasswordRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.UserDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.VerifyResetCodeRequestDto
 
 internal class RemoteDataSource @Inject constructor(
     private val authApi: AuthApi,
@@ -30,6 +32,12 @@ internal class RemoteDataSource @Inject constructor(
 
     suspend fun forgotPassword(email: String) =
         withErrorHandling { authApi.forgotPassword(ForgotPasswordRequestDto(email)) }
+
+    suspend fun verifyResetCode(email: String, code: String): String =
+        withErrorHandling { authApi.verifyResetCode(VerifyResetCodeRequestDto(email, code)).resetToken }
+
+    suspend fun resetPassword(resetToken: String, newPassword: String) =
+        withErrorHandling { authApi.resetPassword(ResetPasswordRequestDto(resetToken, newPassword)) }
 
     suspend fun getUser(): UserDto = withErrorHandling { sessionApi.me().user }
 }

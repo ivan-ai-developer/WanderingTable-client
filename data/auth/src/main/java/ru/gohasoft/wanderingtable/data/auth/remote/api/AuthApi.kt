@@ -7,7 +7,10 @@ import ru.gohasoft.wanderingtable.data.auth.remote.dto.ForgotPasswordRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.LoginRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.RefreshTokenRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.RegisterRequestDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetPasswordRequestDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetTokenResponseDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.UserDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.VerifyResetCodeRequestDto
 
 /** The public `auth` endpoints. Served by the plain client — none of them takes a token. */
 internal interface AuthApi {
@@ -26,9 +29,17 @@ internal interface AuthApi {
     suspend fun logout(@Body body: RefreshTokenRequestDto)
 
     /**
-     * Not implemented on the server yet, so today this answers 404 and the screen says so. The
-     * client is written against the intended contract: 204 on success, 400 on a malformed email.
+     * Emails a six-digit code. Answers 204 for an unregistered address too, so a caller cannot
+     * tell from the response whether the account exists.
      */
     @POST("auth/forgot-password")
     suspend fun forgotPassword(@Body body: ForgotPasswordRequestDto)
+
+    /** 401 when the code is wrong, expired or already spent — the server does not say which. */
+    @POST("auth/verify-reset-code")
+    suspend fun verifyResetCode(@Body body: VerifyResetCodeRequestDto): ResetTokenResponseDto
+
+    /** Responds 204. Every session of the account is revoked server-side. */
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body body: ResetPasswordRequestDto)
 }

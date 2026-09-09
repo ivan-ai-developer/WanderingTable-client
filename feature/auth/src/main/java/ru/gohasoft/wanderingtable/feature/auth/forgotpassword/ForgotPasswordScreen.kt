@@ -97,38 +97,28 @@ private fun ForgotPasswordContent(
 
             Spacer(Modifier.height(WanderingTableSpacing.l))
 
-            if (state.isLinkSent) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.forgot_password_sent_message),
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
+            AuthTextField(
+                label = stringResource(R.string.forgot_password_email_label),
+                value = state.email,
+                error = state.emailError?.getText() ?: state.generalError?.getText(),
+                onValueChange = { onEvent(ForgotPasswordEvent.OnEmailChanged(it)) },
+                placeholder = stringResource(R.string.forgot_password_email_placeholder),
+                keyboardType = KeyboardType.Email,
+            )
+
+            Spacer(Modifier.height(WanderingTableSpacing.l))
+
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                     color = Color.White,
                 )
             } else {
-                AuthTextField(
-                    label = stringResource(R.string.forgot_password_email_label),
-                    value = state.email,
-                    error = state.emailError?.getText() ?: state.generalError?.getText(),
-                    onValueChange = { onEvent(ForgotPasswordEvent.OnEmailChanged(it)) },
-                    placeholder = stringResource(R.string.forgot_password_email_placeholder),
-                    keyboardType = KeyboardType.Email,
+                AuthButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.forgot_password_submit_button),
+                    onClick = { onEvent(ForgotPasswordEvent.OnSubmitClick) },
                 )
-
-                Spacer(Modifier.height(WanderingTableSpacing.l))
-
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        color = Color.White,
-                    )
-                } else {
-                    AuthButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(R.string.forgot_password_submit_button),
-                        onClick = { onEvent(ForgotPasswordEvent.OnSubmitClick) },
-                    )
-                }
             }
 
             Text(

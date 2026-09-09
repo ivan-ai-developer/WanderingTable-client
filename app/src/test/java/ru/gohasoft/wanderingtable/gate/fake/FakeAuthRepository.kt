@@ -22,5 +22,11 @@ internal class FakeAuthRepository : AuthRepository {
     override fun requestPasswordReset(email: String): Flow<Result<Unit>> =
         flowOf(Result.Success(Unit))
 
+    override fun verifyPasswordResetCode(email: String, code: String): Flow<Result<String>> =
+        flowOf(Result.Success("reset-token"))
+
+    override fun resetPassword(resetToken: String, newPassword: String): Flow<Result<Unit>> =
+        flowOf(Result.Success(Unit))
+
     override fun getSession(): Flow<Result<Session>> = flowOf(getSessionResult)
 }

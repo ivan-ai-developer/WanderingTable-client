@@ -15,6 +15,8 @@ internal object AuthValidator {
 
     private val EMAIL_REGEX = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
 
+    private val RESET_CODE_REGEX = Regex("^[0-9]{6}$")
+
     fun validateName(value: String): NameValidationException? = when {
         value.isBlank() -> NameValidationException.Blank()
         value.length > MAX_NAME_LENGTH -> NameValidationException.TooLong()
@@ -27,6 +29,11 @@ internal object AuthValidator {
 
     fun validateLoginPassword(value: String): PasswordValidationException? {
         return if (value.isBlank()) PasswordValidationException.Blank() else null
+    }
+
+    /** Exactly the six digits the server emails; anything else can only come back as a 401. */
+    fun validateResetCode(value: String): ResetCodeValidationException? {
+        return if (RESET_CODE_REGEX.matches(value)) null else ResetCodeValidationException.InvalidFormat()
     }
 
     fun validatePassword(value: String): PasswordValidationException? = when {
@@ -46,6 +53,10 @@ internal sealed class NameValidationException(message: String) : AppException(me
 
 internal sealed class EmailValidationException(message: String) : AppException(message) {
     class InvalidFormat : EmailValidationException("invalid email format")
+}
+
+internal sealed class ResetCodeValidationException(message: String) : AppException(message) {
+    class InvalidFormat : ResetCodeValidationException("reset code must be exactly six digits")
 }
 
 internal sealed class PasswordValidationException(message: String) : AppException(message) {

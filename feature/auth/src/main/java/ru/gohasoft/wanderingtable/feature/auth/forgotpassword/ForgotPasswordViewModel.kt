@@ -13,20 +13,22 @@ import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
 import ru.gohasoft.wanderingtable.core.domain.orUnknownErrorResult
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.Back
+import ru.gohasoft.wanderingtable.core.presentation.navigation.command.Forward
 import ru.gohasoft.wanderingtable.core.presentation.navigation.router.Router
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 import ru.gohasoft.wanderingtable.core.presentation.viewmodel.MviViewModel
 import ru.gohasoft.wanderingtable.feature.auth.forgotpassword.ForgotPasswordEvent.OnBackToLoginClick
 import ru.gohasoft.wanderingtable.feature.auth.forgotpassword.ForgotPasswordEvent.OnEmailChanged
 import ru.gohasoft.wanderingtable.feature.auth.forgotpassword.ForgotPasswordEvent.OnSubmitClick
+import ru.gohasoft.wanderingtable.feature.auth.resetcode.EnterResetCodeScreen
 import ru.gohasoft.wanderingtable.feature.auth.validation.AuthValidator
 import ru.gohasoft.wanderingtable.feature.auth.validation.toFieldError
 import ru.gohasoft.wanderingtable.feature.auth.validation.toPasswordResetFieldError
 
 /**
- * The reset request is expected to fail today — the server has no `auth/forgot-password` endpoint,
- * so the 404 surfaces as an inline "not available yet" message. When the endpoint lands, only the
- * [toPasswordResetFieldError] mapping needs to change.
+ * Success moves straight on to [EnterResetCodeScreen] rather than showing a confirmation here.
+ * The server answers 204 for an unregistered address too, so an unknown email also advances —
+ * that is the point: neither this screen nor the next one can reveal who has an account.
  */
 @HiltViewModel
 internal class ForgotPasswordViewModel @Inject constructor(
@@ -44,7 +46,7 @@ internal class ForgotPasswordViewModel @Inject constructor(
                 emailError = null,
                 generalError = null
             )
-            OnSubmitClick -> requestResetLink()
+            OnSubmitClick -> requestResetCode()
             OnBackToLoginClick -> navigateBack()
         }
     }
@@ -53,7 +55,7 @@ internal class ForgotPasswordViewModel @Inject constructor(
         router.execute(Back())
     }
 
-    private fun requestResetLink() {
+    private fun requestResetCode() {
         val email = _state.value.email
         val emailError = AuthValidator.validateEmail(email)
         if (emailError != null) {
@@ -70,11 +72,10 @@ internal class ForgotPasswordViewModel @Inject constructor(
                         isLoading = true,
                         generalError = null
                     )
-                is Result.Success ->
-                    updateState(
-                        isLoading = false,
-                        isLinkSent = true
-                    )
+                is Result.Success -> {
+                    updateState(isLoading = false)
+                    router.execute(Forward(EnterResetCodeScreen(email)))
+                }
                 is Result.Error ->
                     updateState(
                         isLoading = false,
@@ -89,15 +90,13 @@ internal class ForgotPasswordViewModel @Inject constructor(
         emailError: TextResource? = state.value.emailError,
         generalError: TextResource? = state.value.generalError,
         isLoading: Boolean = state.value.isLoading,
-        isLinkSent: Boolean = state.value.isLinkSent,
     ) {
         _state.update {
             it.copy(
                 email = email,
                 emailError = emailError,
                 generalError = generalError,
-                isLoading = isLoading,
-                isLinkSent = isLinkSent
+                isLoading = isLoading
             )
         }
     }

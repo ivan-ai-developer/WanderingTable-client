@@ -3,11 +3,9 @@ package ru.gohasoft.wanderingtable.feature.auth.forgotpassword
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isFalse
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import assertk.assertions.isTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -19,6 +17,7 @@ import org.junit.jupiter.api.Test
 import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.exception.NetworkException
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.Back
+import ru.gohasoft.wanderingtable.core.presentation.navigation.command.Forward
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 import ru.gohasoft.wanderingtable.feature.auth.R
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeAuthRepository
@@ -51,31 +50,29 @@ class ForgotPasswordViewModelTest {
 
         assertThat(authRepository.requestPasswordResetCallCount).isEqualTo(0)
         assertThat(viewModel.state.value.emailError).isNotNull()
-        assertThat(viewModel.state.value.isLinkSent).isFalse()
+        assertThat(router.executedCommands).isEmpty()
     }
 
     @Test
-    fun `a valid email is forwarded and switches to the confirmation`() = runTest {
+    fun `a valid email is forwarded and moves on to the code screen`() = runTest {
         viewModel.onEvent(ForgotPasswordEvent.OnEmailChanged("player@example.com"))
         viewModel.onEvent(ForgotPasswordEvent.OnSubmitClick)
 
         assertThat(authRepository.requestPasswordResetCallCount).isEqualTo(1)
         assertThat(authRepository.lastPasswordResetEmail).isEqualTo("player@example.com")
-        assertThat(viewModel.state.value.isLinkSent).isTrue()
+        assertThat(router.executedCommands.last()).isInstanceOf(Forward::class)
         assertThat(viewModel.state.value.generalError).isNull()
     }
 
-    /** The endpoint is not implemented server-side yet, so 404 is today's expected answer. */
     @Test
-    fun `a 404 surfaces the unavailable message without navigating`() = runTest {
-        authRepository.requestPasswordResetResult = Result.Error(NetworkException.NotFound())
+    fun `a rate limited request stays on the screen with a message`() = runTest {
+        authRepository.requestPasswordResetResult = Result.Error(NetworkException.TooManyRequests())
 
         viewModel.onEvent(ForgotPasswordEvent.OnEmailChanged("player@example.com"))
         viewModel.onEvent(ForgotPasswordEvent.OnSubmitClick)
 
         assertThat(viewModel.state.value.generalError)
-            .isEqualTo(TextResource.StringResource(R.string.auth_error_password_reset_unavailable))
-        assertThat(viewModel.state.value.isLinkSent).isFalse()
+            .isEqualTo(TextResource.StringResource(R.string.auth_error_too_many_attempts))
         assertThat(router.executedCommands).isEmpty()
     }
 

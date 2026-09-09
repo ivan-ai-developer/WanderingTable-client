@@ -7,6 +7,4 @@ internal data class ForgotPasswordState(
     val emailError: TextResource? = null,
     val generalError: TextResource? = null,
     val isLoading: Boolean = false,
-    /** Once true the form is replaced by a confirmation, so the request can't be fired twice. */
-    val isLinkSent: Boolean = false,
 )

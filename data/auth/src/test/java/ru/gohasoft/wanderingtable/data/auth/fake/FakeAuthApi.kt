@@ -6,7 +6,10 @@ import ru.gohasoft.wanderingtable.data.auth.remote.dto.ForgotPasswordRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.LoginRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.RefreshTokenRequestDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.RegisterRequestDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetPasswordRequestDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetTokenResponseDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.UserDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.VerifyResetCodeRequestDto
 
 internal class FakeAuthApi : AuthApi {
 
@@ -18,16 +21,23 @@ internal class FakeAuthApi : AuthApi {
     )
     var loginResult = AuthTokensResponseDto("access-token", "refresh-token")
     var refreshResult = AuthTokensResponseDto("new-access-token", "new-refresh-token")
+    var verifyResetCodeResult = ResetTokenResponseDto("reset-token")
 
     var registerError: Throwable? = null
     var loginError: Throwable? = null
     var logoutError: Throwable? = null
     var forgotPasswordError: Throwable? = null
+    var verifyResetCodeError: Throwable? = null
+    var resetPasswordError: Throwable? = null
 
     var registerCallCount = 0
     var refreshCallCount = 0
     var forgotPasswordCallCount = 0
+    var verifyResetCodeCallCount = 0
+    var resetPasswordCallCount = 0
     var lastForgotPasswordEmail: String? = null
+    var lastVerifyResetCode: VerifyResetCodeRequestDto? = null
+    var lastResetPassword: ResetPasswordRequestDto? = null
     var loggedOutTokens = mutableListOf<String>()
 
     override suspend fun register(body: RegisterRequestDto): UserDto {
@@ -55,5 +65,18 @@ internal class FakeAuthApi : AuthApi {
         forgotPasswordCallCount++
         lastForgotPasswordEmail = body.email
         forgotPasswordError?.let { throw it }
+    }
+
+    override suspend fun verifyResetCode(body: VerifyResetCodeRequestDto): ResetTokenResponseDto {
+        verifyResetCodeCallCount++
+        lastVerifyResetCode = body
+        verifyResetCodeError?.let { throw it }
+        return verifyResetCodeResult
+    }
+
+    override suspend fun resetPassword(body: ResetPasswordRequestDto) {
+        resetPasswordCallCount++
+        lastResetPassword = body
+        resetPasswordError?.let { throw it }
     }
 }

@@ -23,7 +23,10 @@ import ru.gohasoft.wanderingtable.data.auth.local.LocalDataSource
 import ru.gohasoft.wanderingtable.data.auth.local.dbo.CachedUserDbo
 import ru.gohasoft.wanderingtable.data.auth.remote.RemoteDataSource
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.AuthTokensResponseDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetPasswordRequestDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.ResetTokenResponseDto
 import ru.gohasoft.wanderingtable.data.auth.remote.dto.UserDto
+import ru.gohasoft.wanderingtable.data.auth.remote.dto.VerifyResetCodeRequestDto
 
 class TokenBackedAuthRepositoryTest {
 
@@ -149,6 +152,44 @@ class TokenBackedAuthRepositoryTest {
 
         assertThat(result).isInstanceOf(Result.Error::class)
         assertThat((result as Result.Error).error).isInstanceOf(NetworkException.Unauthorized::class)
+    }
+
+    @Test
+    fun `verifying a reset code hands back the token from the server`() = runTest {
+        authApi.verifyResetCodeResult = ResetTokenResponseDto("reset-99")
+
+        val result = repository.verifyPasswordResetCode("alice@example.com", "123456").awaitFinalResult()
+
+        assertThat(authApi.lastVerifyResetCode)
+            .isEqualTo(VerifyResetCodeRequestDto("alice@example.com", "123456"))
+        assertThat(result).isInstanceOf(Result.Success::class)
+        assertThat((result as Result.Success).data).isEqualTo("reset-99")
+    }
+
+    @Test
+    fun `a rejected reset code surfaces as an error`() = runTest {
+        authApi.verifyResetCodeError = NetworkException.Unauthorized()
+
+        val result = repository.verifyPasswordResetCode("alice@example.com", "123456").awaitFinalResult()
+
+        assertThat(result).isInstanceOf(Result.Error::class)
+        assertThat((result as Result.Error).error).isInstanceOf(NetworkException.Unauthorized::class)
+    }
+
+    /**
+     * The server revokes every session as part of the reset, and the account being reset need not be
+     * the one signed in on this device — so the local store is deliberately left untouched.
+     */
+    @Test
+    fun `resetting a password leaves the stored session alone`() = runTest {
+        localDataSource.saveTokens(TokenPair("access-1", "refresh-1"))
+
+        val result = repository.resetPassword("reset-99", "Password1").awaitFinalResult()
+
+        assertThat(authApi.lastResetPassword)
+            .isEqualTo(ResetPasswordRequestDto("reset-99", "Password1"))
+        assertThat(result).isInstanceOf(Result.Success::class)
+        assertThat(localDataSource.getTokens()).isEqualTo(TokenPair("access-1", "refresh-1"))
     }
 
     private fun cachedUser(name: String = "Alice") = CachedUserDbo(
