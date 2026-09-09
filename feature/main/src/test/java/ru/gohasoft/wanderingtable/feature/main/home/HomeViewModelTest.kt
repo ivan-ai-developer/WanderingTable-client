@@ -3,6 +3,7 @@ package ru.gohasoft.wanderingtable.feature.main.home
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import kotlinx.coroutines.Dispatchers
@@ -115,12 +116,27 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `a failed feed is an error state`() = runTest {
+    fun `a failed feed with nothing cached is an error state`() = runTest {
         newsRepository.getNewsResult = Result.Error(NetworkException.NoInternet())
 
         val viewModel = createViewModel()
 
         assertThat(viewModel.state.value.error).isNotNull()
+    }
+
+    /** Offline with a cached feed shows the cached feed, not the error screen. */
+    @Test
+    fun `a failed refresh keeps the cached feed on screen`() = runTest {
+        newsRepository.getNewsResult = Result.Error(
+            error = NetworkException.NoInternet(),
+            data = listOf(TestGameEvents.news()),
+        )
+
+        val viewModel = createViewModel()
+
+        assertThat(viewModel.state.value.error).isNull()
+        assertThat(viewModel.state.value.news).hasSize(1)
+        assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
     private fun createViewModel() = HomeViewModel(

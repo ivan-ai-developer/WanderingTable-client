@@ -4,16 +4,17 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Instant
 import javax.inject.Inject
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorData
-import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
+import ru.gohasoft.wanderingtable.core.domain.model.game.Game
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEvent
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEventStatus
 import ru.gohasoft.wanderingtable.core.domain.model.news.NewsItem
@@ -38,8 +39,10 @@ import ru.gohasoft.wanderingtable.feature.main.newsdetail.NewsDetailScreen
 /**
  * Home is a read-only digest: the soonest play the user is in, and the club news feed.
  *
- * The three reads are issued together rather than chained, because none of them depends on the
- * others once the session is known.
+ * The three reads are combined rather than chained, because none of them depends on the others
+ * once the session is known. Each is offline-first, so the screen paints from cache on the first
+ * emission and repaints when the refresh lands — the spinner is only for a cold start, and a
+ * failed refresh leaves the cached digest on screen instead of replacing it with an error.
  */
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
@@ -52,6 +55,10 @@ internal class HomeViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(HomeState())
     override val state: StateFlow<HomeState> = _state.asStateFlow()
+
+    /** The offline-first reads never complete, so a retry replaces the collection rather than
+     *  stacking a second one on top of it. */
+    private var loadJob: Job? = null
 
     init {
         load()
@@ -72,44 +79,62 @@ internal class HomeViewModel @Inject constructor(
     }
 
     private fun load() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
             val userId = authRepository.getSession().firstSuccessOrErrorData()?.user?.id
-            val (games, myGames, news) = coroutineScope {
-                val gamesTask = async { gameRepository.getGames().firstSuccessOrErrorResult() }
-                val myGamesTask = async {
-                    userId?.let { gameEventRepository.getUserGames(it).firstSuccessOrErrorResult() }
-                }
-                val newsTask = async { newsRepository.getNews().firstSuccessOrErrorResult() }
-                Triple(gamesTask.await(), myGamesTask.await(), newsTask.await())
-            }
+            val myGames = userId
+                ?.let { gameEventRepository.getUserGames(it) }
+                ?: flowOf(Result.Success(emptyList()))
 
-            // The feed is the screen's reason to exist, so only a failed feed is an error state;
-            // a missing catalogue or schedule just leaves the hero card out.
-            if (news is Result.Error) {
-                _state.update { it.copy(isLoading = false, error = news.error.toLoadError()) }
-                return@launch
-            }
-
-            val catalogue = games?.data.orEmpty().byId()
-            val nextGame = myGames?.data.orEmpty().toNextGame()
-            _state.update { current ->
-                current.copy(
-                    isLoading = false,
-                    error = null,
-                    nextGame = nextGame?.toGameEventUi(
-                        games = catalogue,
-                        currentUserId = userId,
-                        joinedEventIds = setOf(nextGame.id),
-                    ),
-                    news = news?.data.orEmpty().map { item: NewsItem ->
-                        item.toNewsItemUi(currentUserId = userId)
-                    },
-                )
-            }
+            combine(
+                gameRepository.getGames(),
+                myGames,
+                newsRepository.getNews(),
+            ) { games, mine, news -> Digest(games, mine, news) }
+                .collect { digest -> render(userId, digest) }
         }
     }
+
+    /**
+     * The feed is the screen's reason to exist, so only a feed with nothing to show — no cache and
+     * a failed refresh — is an error state; a missing catalogue or schedule just leaves the hero
+     * card out.
+     */
+    private fun render(userId: String?, digest: Digest) {
+        val news = digest.news.data
+        if (news == null) {
+            _state.update { current ->
+                current.copy(
+                    isLoading = digest.news is Result.Loading,
+                    error = (digest.news as? Result.Error)?.error?.toLoadError(),
+                )
+            }
+            return
+        }
+
+        val catalogue = digest.games.data.orEmpty().byId()
+        val nextGame = digest.myGames.data.orEmpty().toNextGame()
+        _state.update { current ->
+            current.copy(
+                isLoading = false,
+                error = null,
+                nextGame = nextGame?.toGameEventUi(
+                    games = catalogue,
+                    currentUserId = userId,
+                    joinedEventIds = setOf(nextGame.id),
+                ),
+                news = news.map { item: NewsItem -> item.toNewsItemUi(currentUserId = userId) },
+            )
+        }
+    }
+
+    private data class Digest(
+        val games: Result<List<Game>>,
+        val myGames: Result<List<GameEvent>>,
+        val news: Result<List<NewsItem>>,
+    )
 
     /** `GET /users/{id}/games` comes back newest-first; Home wants the soonest one still ahead. */
     private fun List<GameEvent>.toNextGame(now: Instant = Instant.now()): GameEvent? = this

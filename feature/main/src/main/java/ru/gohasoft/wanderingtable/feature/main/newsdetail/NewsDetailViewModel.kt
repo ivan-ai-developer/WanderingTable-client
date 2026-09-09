@@ -55,18 +55,23 @@ internal class NewsDetailViewModel @AssistedInject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
             val userId = authRepository.getSession().firstSuccessOrErrorData()?.user?.id
             val result = newsRepository.getNewsItem(screen.newsId).firstSuccessOrErrorResult()
+            val news = result?.data
             _state.update { current ->
-                when (result) {
-                    is Result.Error -> current.copy(
+                when {
+                    // The feed is cached, so a post opened from an offline Home still reads;
+                    // only a post with nothing stored behind it becomes an error.
+                    news != null -> current.copy(
+                        isLoading = false,
+                        error = null,
+                        news = news.toNewsItemUi(currentUserId = userId),
+                    )
+
+                    result is Result.Error -> current.copy(
                         isLoading = false,
                         error = result.error.toLoadError(),
                     )
 
-                    else -> current.copy(
-                        isLoading = false,
-                        error = null,
-                        news = result?.data?.toNewsItemUi(currentUserId = userId),
-                    )
+                    else -> current.copy(isLoading = false, error = null, news = null)
                 }
             }
         }

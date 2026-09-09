@@ -8,23 +8,45 @@ import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEvent
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEventStatus
 import ru.gohasoft.wanderingtable.core.domain.repository.GameEventRepository
+import ru.gohasoft.wanderingtable.data.main.local.CacheDataSource
 import ru.gohasoft.wanderingtable.data.main.mapper.toGameEvent
 import ru.gohasoft.wanderingtable.data.main.mapper.toGameEvents
 import ru.gohasoft.wanderingtable.data.main.remote.RemoteDataSource
 import ru.gohasoft.wanderingtable.data.main.remote.dto.CreateRegularGameRequestDto
 
-internal class NetworkGameEventRepository @Inject constructor(
+/**
+ * The two schedule lists — the club's and the user's own — are cached under separate scopes,
+ * because the same play belongs to both and each list is refreshed on its own.
+ *
+ * Only the lists are cached. A single event is not: list responses omit `participants`, so a
+ * cached row could only ever claim an empty roster, and the detail screen is the one place that
+ * needs the real one.
+ */
+internal class OfflineFirstGameEventRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
+    private val cacheDataSource: CacheDataSource,
 ) : GameEventRepository {
 
-    override fun getEvents(status: GameEventStatus?): Flow<Result<List<GameEvent>>> =
-        ResultFlow.onlineOnly { remoteDataSource.getEvents(status?.name).toGameEvents() }
+    override fun getEvents(status: GameEventStatus?): Flow<Result<List<GameEvent>>> {
+        val scope = CacheDataSource.clubScope(status?.name)
+        return ResultFlow.offlineFirst(
+            query = { cacheDataSource.getEvents(scope) },
+            fetch = { remoteDataSource.getEvents(status?.name).toGameEvents() },
+            saveFetchResult = { fetched, _ -> cacheDataSource.saveEvents(scope, fetched) },
+        )
+    }
 
     override fun getEvent(eventId: String): Flow<Result<GameEvent>> =
         ResultFlow.onlineOnly { remoteDataSource.getEvent(eventId).toGameEvent() }
 
-    override fun getUserGames(userId: String): Flow<Result<List<GameEvent>>> =
-        ResultFlow.onlineOnly { remoteDataSource.getUserGames(userId).toGameEvents() }
+    override fun getUserGames(userId: String): Flow<Result<List<GameEvent>>> {
+        val scope = CacheDataSource.userScope(userId)
+        return ResultFlow.offlineFirst(
+            query = { cacheDataSource.getEvents(scope) },
+            fetch = { remoteDataSource.getUserGames(userId).toGameEvents() },
+            saveFetchResult = { fetched, _ -> cacheDataSource.saveEvents(scope, fetched) },
+        )
+    }
 
     override fun createRegularGame(
         gameId: String,

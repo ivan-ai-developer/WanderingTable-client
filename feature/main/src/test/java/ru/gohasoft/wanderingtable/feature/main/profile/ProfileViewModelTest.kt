@@ -6,6 +6,7 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -22,6 +23,7 @@ import ru.gohasoft.wanderingtable.core.presentation.navigation.command.NewRoot
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.ShowSnackbar
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeAppEntryScreens
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeAuthRepository
+import ru.gohasoft.wanderingtable.feature.main.fake.FakeCacheRepository
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeDeviceRepository
 import ru.gohasoft.wanderingtable.feature.main.fake.FakePushTokenProvider
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeRouter
@@ -34,6 +36,7 @@ class ProfileViewModelTest {
     private lateinit var authRepository: FakeAuthRepository
     private lateinit var userRepository: FakeUserRepository
     private lateinit var deviceRepository: FakeDeviceRepository
+    private lateinit var cacheRepository: FakeCacheRepository
 
     @BeforeEach
     fun setUp() {
@@ -42,6 +45,7 @@ class ProfileViewModelTest {
         authRepository = FakeAuthRepository()
         userRepository = FakeUserRepository()
         deviceRepository = FakeDeviceRepository()
+        cacheRepository = FakeCacheRepository()
     }
 
     @AfterEach
@@ -129,7 +133,7 @@ class ProfileViewModelTest {
     }
 
     @Test
-    fun `a failed profile read shows an error`() = runTest {
+    fun `a failed profile read with nothing cached shows an error`() = runTest {
         userRepository.getProfileResult = Result.Error(NetworkException.NoInternet())
 
         val viewModel = createViewModel()
@@ -137,11 +141,36 @@ class ProfileViewModelTest {
         assertThat(viewModel.state.value.error).isNotNull()
     }
 
+    /** Being offline with a stored profile shows the stored one rather than an error screen. */
+    @Test
+    fun `a failed refresh keeps the cached profile on screen`() = runTest {
+        userRepository.getProfileResult = Result.Error(
+            error = NetworkException.NoInternet(),
+            data = FakeUserRepository.profile(name = "Alex Novak"),
+        )
+
+        val viewModel = createViewModel()
+
+        assertThat(viewModel.state.value.error).isNull()
+        assertThat(viewModel.state.value.profile?.initials).isEqualTo("AN")
+    }
+
+    /** The next account on this device must not open on the previous one's cached data. */
+    @Test
+    fun `logging out drops the cache`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onEvent(ProfileEvent.OnLogOutClick)
+
+        assertThat(cacheRepository.clearCallCount).isEqualTo(1)
+    }
+
     private fun createViewModel(pushToken: String? = "fcm-token") = ProfileViewModel(
         router = router,
         appEntryScreens = FakeAppEntryScreens(),
         authRepository = authRepository,
         userRepository = userRepository,
+        cacheRepository = cacheRepository,
         deviceRepository = deviceRepository,
         pushTokenProvider = FakePushTokenProvider(pushToken),
     )

@@ -51,14 +51,19 @@ object ResultFlow {
     /**
      * [query] may emit `null` for "nothing cached yet" — [Result] already carries nullable data,
      * and callers such as the session repository legitimately have no local value to start from.
+     *
+     * Deliberately not `inline`: inlining these `crossinline suspend` lambdas into a `channelFlow`
+     * crashes the JVM back end ("Couldn't inline method call") as soon as a caller omits one of the
+     * optional arguments and goes through the synthetic `$default` bridge. There is nothing to
+     * gain from inlining a function that allocates a flow anyway.
      */
-    inline fun <ResultType, RequestType> offlineFirst(
-        crossinline query: () -> Flow<ResultType?>,
-        crossinline fetch: suspend () -> RequestType,
-        crossinline saveFetchResult: suspend (RequestType, ResultType?) -> Unit,
-        crossinline shouldFetch: suspend (ResultType?) -> Boolean = { true },
-        crossinline onFetchSuccess: () -> Unit = {},
-        crossinline onFetchFailed: (AppException) -> Unit = {},
+    fun <ResultType, RequestType> offlineFirst(
+        query: () -> Flow<ResultType?>,
+        fetch: suspend () -> RequestType,
+        saveFetchResult: suspend (RequestType, ResultType?) -> Unit,
+        shouldFetch: suspend (ResultType?) -> Boolean = { true },
+        onFetchSuccess: () -> Unit = {},
+        onFetchFailed: (AppException) -> Unit = {},
     ): Flow<Result<ResultType>> = channelFlow {
         val data = query().first()
         if (shouldFetch(data)) {

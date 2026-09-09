@@ -5,6 +5,7 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -129,13 +130,28 @@ class GamesViewModelTest {
     }
 
     @Test
-    fun `a failed schedule read surfaces as an error rather than an empty list`() = runTest {
+    fun `a failed schedule read with nothing cached surfaces as an error`() = runTest {
         gameEventRepository.getEventsResult = Result.Error(NetworkException.NoInternet())
 
         val viewModel = createViewModel()
 
         assertThat(viewModel.state.value.error).isNotNull()
         assertThat(viewModel.state.value.isLoading).isFalse()
+    }
+
+    /** Offline with a cached schedule shows the cached schedule, not the error screen. */
+    @Test
+    fun `a failed refresh keeps the cached schedule on screen`() = runTest {
+        gameEventRepository.getEventsResult = Result.Error(
+            error = NetworkException.NoInternet(),
+            data = listOf(TestGameEvents.event(id = "cached")),
+        )
+
+        val viewModel = createViewModel()
+
+        assertThat(viewModel.state.value.error).isNull()
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.games.single().id).isEqualTo("cached")
     }
 
     private fun createViewModel() = GamesViewModel(

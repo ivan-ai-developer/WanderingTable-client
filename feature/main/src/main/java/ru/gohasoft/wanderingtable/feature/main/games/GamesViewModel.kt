@@ -3,11 +3,12 @@ package ru.gohasoft.wanderingtable.feature.main.games
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gohasoft.wanderingtable.core.domain.Result
@@ -16,6 +17,7 @@ import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEvent
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEventStatus
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEventType
+import ru.gohasoft.wanderingtable.core.domain.model.game.Game
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.GameEventRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.GameRepository
@@ -43,6 +45,10 @@ import ru.gohasoft.wanderingtable.feature.main.mapper.toLoadError
  *
  * Membership cannot be read from the schedule — list responses omit `participants` — so the plays
  * the user is in are fetched separately and matched by id.
+ *
+ * All three reads are offline-first, so the list paints from cache on the first emission and
+ * repaints when the refresh lands; the spinner is only for a cold start, and a failed refresh
+ * leaves the cached schedule on screen rather than replacing it with an error.
  */
 @HiltViewModel
 internal class GamesViewModel @Inject constructor(
@@ -54,6 +60,10 @@ internal class GamesViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(GamesState())
     override val state: StateFlow<GamesState> = _state.asStateFlow()
+
+    /** The offline-first reads never complete, so a retry replaces the collection rather than
+     *  stacking a second one on top of it. */
+    private var loadJob: Job? = null
 
     init {
         load()
@@ -74,46 +84,65 @@ internal class GamesViewModel @Inject constructor(
     }
 
     private fun load() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
             val userId = authRepository.getSession().firstSuccessOrErrorData()?.user?.id
-            val (games, events, myGames) = coroutineScope {
-                val gamesTask = async { gameRepository.getGames().firstSuccessOrErrorResult() }
-                val eventsTask = async {
-                    gameEventRepository.getEvents(GameEventStatus.PLANNED).firstSuccessOrErrorResult()
-                }
-                val myGamesTask = async {
-                    userId?.let { gameEventRepository.getUserGames(it).firstSuccessOrErrorResult() }
-                }
-                Triple(gamesTask.await(), eventsTask.await(), myGamesTask.await())
-            }
+            val myGames = userId
+                ?.let { gameEventRepository.getUserGames(it) }
+                ?: flowOf(Result.Success(emptyList()))
 
-            if (events is Result.Error) {
-                _state.update { it.copy(isLoading = false, error = events.error.toLoadError()) }
-                return@launch
-            }
-
-            val catalogue = games?.data.orEmpty().byId()
-            val joinedEventIds = myGames?.data.orEmpty().map(GameEvent::id).toSet()
-            _state.update { current ->
-                current.copy(
-                    isLoading = false,
-                    error = null,
-                    games = events?.data.orEmpty()
-                        .filter { it.type == GameEventType.REGULAR_GAME }
-                        .sortedBy { it.startsAt ?: it.createdAt }
-                        .map { event ->
-                            event.toGameEventUi(
-                                games = catalogue,
-                                currentUserId = userId,
-                                joinedEventIds = joinedEventIds,
-                            )
-                        },
-                )
-            }
+            combine(
+                gameRepository.getGames(),
+                gameEventRepository.getEvents(GameEventStatus.PLANNED),
+                myGames,
+            ) { games, events, mine -> Schedule(games, events, mine) }
+                .collect { schedule -> render(userId, schedule) }
         }
     }
+
+    /**
+     * Only a schedule with nothing to show — no cache and a failed refresh — is an error state;
+     * a missing catalogue just leaves the cards without their game names.
+     */
+    private fun render(userId: String?, schedule: Schedule) {
+        val events = schedule.events.data
+        if (events == null) {
+            _state.update { current ->
+                current.copy(
+                    isLoading = schedule.events is Result.Loading,
+                    error = (schedule.events as? Result.Error)?.error?.toLoadError(),
+                )
+            }
+            return
+        }
+
+        val catalogue = schedule.games.data.orEmpty().byId()
+        val joinedEventIds = schedule.myGames.data.orEmpty().map(GameEvent::id).toSet()
+        _state.update { current ->
+            current.copy(
+                isLoading = false,
+                error = null,
+                games = events
+                    .filter { it.type == GameEventType.REGULAR_GAME }
+                    .sortedBy { it.startsAt ?: it.createdAt }
+                    .map { event ->
+                        event.toGameEventUi(
+                            games = catalogue,
+                            currentUserId = userId,
+                            joinedEventIds = joinedEventIds,
+                        )
+                    },
+            )
+        }
+    }
+
+    private data class Schedule(
+        val games: Result<List<Game>>,
+        val events: Result<List<GameEvent>>,
+        val myGames: Result<List<GameEvent>>,
+    )
 
     /**
      * The server rejects a second join with 409, so a double tap cannot create two seats; the

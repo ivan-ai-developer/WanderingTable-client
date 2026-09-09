@@ -3,6 +3,7 @@ package ru.gohasoft.wanderingtable.feature.main.profile
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,7 @@ import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
 import ru.gohasoft.wanderingtable.core.domain.push.PushTokenProvider
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
+import ru.gohasoft.wanderingtable.core.domain.repository.CacheRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.DeviceRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.UserRepository
 import ru.gohasoft.wanderingtable.core.presentation.navigation.AppEntryScreens
@@ -40,12 +42,17 @@ internal class ProfileViewModel @Inject constructor(
     private val appEntryScreens: AppEntryScreens,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val cacheRepository: CacheRepository,
     private val deviceRepository: DeviceRepository,
     private val pushTokenProvider: PushTokenProvider,
 ) : MviViewModel<ProfileState, ProfileEvent, Unit>() {
 
     private val _state = MutableStateFlow(ProfileState())
     override val state: StateFlow<ProfileState> = _state.asStateFlow()
+
+    /** The offline-first read never completes, so a retry replaces the collection rather than
+     *  stacking a second one on top of it. */
+    private var loadJob: Job? = null
 
     init {
         load()
@@ -61,22 +68,31 @@ internal class ProfileViewModel @Inject constructor(
         }
     }
 
+    /**
+     * The profile is offline-first: the cached copy paints immediately and the refresh replaces it
+     * when it lands. Only an empty cache with a failed refresh is an error state — being offline
+     * with a stored profile shows the stored one, stale statistics and all.
+     */
     private fun load() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            val result = userRepository.getProfile().firstSuccessOrErrorResult()
-            _state.update { current ->
-                when (result) {
-                    is Result.Error -> current.copy(
-                        isLoading = false,
-                        error = result.error.toLoadError(),
-                    )
+            userRepository.getProfile().collect { result ->
+                val profile = result.data
+                _state.update { current ->
+                    when {
+                        profile != null -> current.copy(
+                            isLoading = false,
+                            error = null,
+                            profile = profile.toProfileUi(),
+                        )
 
-                    else -> current.copy(
-                        isLoading = false,
-                        error = null,
-                        profile = result?.data?.toProfileUi(),
-                    )
+                        else -> current.copy(
+                            isLoading = result is Result.Loading,
+                            error = (result as? Result.Error)?.error?.toLoadError(),
+                            profile = null,
+                        )
+                    }
                 }
             }
         }
@@ -95,6 +111,10 @@ internal class ProfileViewModel @Inject constructor(
                 deviceRepository.unregisterPushToken(token).firstSuccessOrErrorResult()
             }
             authRepository.logOut().firstSuccessOrErrorResult()
+            // The cached profile, schedule and feed belong to the account signing out; without
+            // this the next account on the device opens on the previous one's data.
+            loadJob?.cancel()
+            cacheRepository.clear().firstSuccessOrErrorResult()
             router.execute(NewRoot(appEntryScreens.login()))
         }
     }
