@@ -4,7 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.gohasoft.wanderingtable.core.domain.repository.CacheRepository
+import dagger.multibindings.IntoSet
+import ru.gohasoft.wanderingtable.core.data.cache.CacheCleaner
 import ru.gohasoft.wanderingtable.core.domain.repository.DeviceRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.GameEventRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.GameRepository
@@ -14,12 +15,12 @@ import ru.gohasoft.wanderingtable.core.domain.repository.NotificationSettingsRep
 import ru.gohasoft.wanderingtable.core.domain.repository.UserRepository
 import ru.gohasoft.wanderingtable.data.main.repository.DataStoreNotificationRepository
 import ru.gohasoft.wanderingtable.data.main.repository.DataStoreNotificationSettingsRepository
+import ru.gohasoft.wanderingtable.data.main.local.LocalDataSource
 import ru.gohasoft.wanderingtable.data.main.repository.NetworkDeviceRepository
 import ru.gohasoft.wanderingtable.data.main.repository.OfflineFirstGameEventRepository
 import ru.gohasoft.wanderingtable.data.main.repository.OfflineFirstGameRepository
 import ru.gohasoft.wanderingtable.data.main.repository.OfflineFirstNewsRepository
 import ru.gohasoft.wanderingtable.data.main.repository.OfflineFirstUserRepository
-import ru.gohasoft.wanderingtable.data.main.repository.RoomCacheRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -40,8 +41,10 @@ internal interface MainDataModule {
     @Binds
     fun bindDeviceRepository(impl: NetworkDeviceRepository): DeviceRepository
 
+    /** Registers this module's Room store for the wipe that logging out performs. */
     @Binds
-    fun bindCacheRepository(impl: RoomCacheRepository): CacheRepository
+    @IntoSet
+    fun bindCacheCleaner(impl: LocalDataSource): CacheCleaner
 
     @Binds
     fun bindNotificationRepository(impl: DataStoreNotificationRepository): NotificationRepository

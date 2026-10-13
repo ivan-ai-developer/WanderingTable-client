@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "140316975925",
+    "project_id": "wanderingtable-94784",
+    "storage_bucket": "wanderingtable-94784.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140316975925:android:68bd4744748c0b1ad3a27c",
+        "android_client_info": {
+          "package_name": "ru.gohasoft.wanderingtable"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDhWTJN96ZWpmZV7dBFsgI_mNr32qmr58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

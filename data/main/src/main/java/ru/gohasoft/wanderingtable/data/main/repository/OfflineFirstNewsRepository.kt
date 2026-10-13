@@ -7,20 +7,20 @@ import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.exception.NetworkException
 import ru.gohasoft.wanderingtable.core.domain.model.news.NewsItem
 import ru.gohasoft.wanderingtable.core.domain.repository.NewsRepository
-import ru.gohasoft.wanderingtable.data.main.local.CacheDataSource
+import ru.gohasoft.wanderingtable.data.main.local.LocalDataSource
 import ru.gohasoft.wanderingtable.data.main.mapper.toNewsItem
 import ru.gohasoft.wanderingtable.data.main.mapper.toNewsItems
 import ru.gohasoft.wanderingtable.data.main.remote.RemoteDataSource
 
 internal class OfflineFirstNewsRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val cacheDataSource: CacheDataSource,
+    private val localDataSource: LocalDataSource,
 ) : NewsRepository {
 
     override fun getNews(): Flow<Result<List<NewsItem>>> = ResultFlow.offlineFirst(
-        query = { cacheDataSource.getNews() },
+        query = { localDataSource.getNews() },
         fetch = { remoteDataSource.getNews().toNewsItems() },
-        saveFetchResult = { fetched, _ -> cacheDataSource.saveNews(fetched) },
+        saveFetchResult = { fetched, _ -> localDataSource.saveNews(fetched) },
     )
 
     /**
@@ -33,12 +33,12 @@ internal class OfflineFirstNewsRepository @Inject constructor(
      * real 404 — but only when there is nothing cached to show, so being offline is not a 404.
      */
     override fun getNewsItem(newsId: String): Flow<Result<NewsItem>> = ResultFlow.offlineFirst(
-        query = { cacheDataSource.getNewsItem(newsId) },
+        query = { localDataSource.getNewsItem(newsId) },
         fetch = { remoteDataSource.getNews().toNewsItems() },
         // The feed is stored before the post is looked for, so a post that is gone leaves no
         // stale row behind and the query underneath this error has already emitted null.
         saveFetchResult = { fetched, _ ->
-            cacheDataSource.saveNews(fetched)
+            localDataSource.saveNews(fetched)
             if (fetched.none { it.id == newsId }) throw NetworkException.NotFound()
         },
     )

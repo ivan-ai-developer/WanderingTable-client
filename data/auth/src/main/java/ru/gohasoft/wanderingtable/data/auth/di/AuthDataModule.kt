@@ -4,6 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.Multibinds
+import ru.gohasoft.wanderingtable.core.data.cache.CacheCleaner
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
 import ru.gohasoft.wanderingtable.core.network.auth.TokenProvider
 import ru.gohasoft.wanderingtable.core.network.auth.TokenRefresher
@@ -29,4 +31,12 @@ internal interface AuthDataModule {
 
     @Binds
     fun bindTokenCipher(impl: KeystoreTokenCipher): TokenCipher
+
+    /**
+     * Declares the set logging out wipes, so this module compiles on its own: feature data modules
+     * add their stores `@IntoSet`, and a build with none of them gets an empty set instead of a
+     * missing-binding error.
+     */
+    @Multibinds
+    fun cacheCleaners(): Set<CacheCleaner>
 }

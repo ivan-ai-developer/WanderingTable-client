@@ -23,7 +23,6 @@ import ru.gohasoft.wanderingtable.core.presentation.navigation.command.NewRoot
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.ShowSnackbar
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeAppEntryScreens
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeAuthRepository
-import ru.gohasoft.wanderingtable.feature.main.fake.FakeCacheRepository
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeDeviceRepository
 import ru.gohasoft.wanderingtable.feature.main.fake.FakePushTokenProvider
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeRouter
@@ -36,7 +35,6 @@ class ProfileViewModelTest {
     private lateinit var authRepository: FakeAuthRepository
     private lateinit var userRepository: FakeUserRepository
     private lateinit var deviceRepository: FakeDeviceRepository
-    private lateinit var cacheRepository: FakeCacheRepository
 
     @BeforeEach
     fun setUp() {
@@ -45,7 +43,6 @@ class ProfileViewModelTest {
         authRepository = FakeAuthRepository()
         userRepository = FakeUserRepository()
         deviceRepository = FakeDeviceRepository()
-        cacheRepository = FakeCacheRepository()
     }
 
     @AfterEach
@@ -155,22 +152,12 @@ class ProfileViewModelTest {
         assertThat(viewModel.state.value.profile?.initials).isEqualTo("AN")
     }
 
-    /** The next account on this device must not open on the previous one's cached data. */
-    @Test
-    fun `logging out drops the cache`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onEvent(ProfileEvent.OnLogOutClick)
-
-        assertThat(cacheRepository.clearCallCount).isEqualTo(1)
-    }
 
     private fun createViewModel(pushToken: String? = "fcm-token") = ProfileViewModel(
         router = router,
         appEntryScreens = FakeAppEntryScreens(),
         authRepository = authRepository,
         userRepository = userRepository,
-        cacheRepository = cacheRepository,
         deviceRepository = deviceRepository,
         pushTokenProvider = FakePushTokenProvider(pushToken),
     )

@@ -13,7 +13,6 @@ import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
 import ru.gohasoft.wanderingtable.core.domain.push.PushTokenProvider
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
-import ru.gohasoft.wanderingtable.core.domain.repository.CacheRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.DeviceRepository
 import ru.gohasoft.wanderingtable.core.domain.repository.UserRepository
 import ru.gohasoft.wanderingtable.core.presentation.navigation.AppEntryScreens
@@ -42,7 +41,6 @@ internal class ProfileViewModel @Inject constructor(
     private val appEntryScreens: AppEntryScreens,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val cacheRepository: CacheRepository,
     private val deviceRepository: DeviceRepository,
     private val pushTokenProvider: PushTokenProvider,
 ) : MviViewModel<ProfileState, ProfileEvent, Unit>() {
@@ -110,11 +108,10 @@ internal class ProfileViewModel @Inject constructor(
             pushTokenProvider.currentToken()?.let { token ->
                 deviceRepository.unregisterPushToken(token).firstSuccessOrErrorResult()
             }
-            authRepository.logOut().firstSuccessOrErrorResult()
-            // The cached profile, schedule and feed belong to the account signing out; without
-            // this the next account on the device opens on the previous one's data.
+            // Stop observing before the session goes: logging out empties the cache the profile
+            // flow reads, and a last emission of nothing would blank the screen on the way out.
             loadJob?.cancel()
-            cacheRepository.clear().firstSuccessOrErrorResult()
+            authRepository.logOut().firstSuccessOrErrorResult()
             router.execute(NewRoot(appEntryScreens.login()))
         }
     }

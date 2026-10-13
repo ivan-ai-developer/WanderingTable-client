@@ -1,6 +1,9 @@
 package ru.gohasoft.wanderingtable.core.presentation.navigation.command
 
 import androidx.compose.material3.SnackbarResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.context.NavigationCommandContext
 import ru.gohasoft.wanderingtable.core.presentation.navigation.command.context.nav3.Navigation3CommandContext
 import ru.gohasoft.wanderingtable.core.presentation.utils.SnackbarScreenConfig
@@ -15,9 +18,13 @@ class ShowSnackbar(
     private val onAction: (suspend (NavigationCommandContext) -> Unit)? = null,
 ) : Command {
     override suspend fun execute(context: Navigation3CommandContext) {
-        val result = context.showSnackbar(config)
-        if (result == SnackbarResult.ActionPerformed) {
-            onAction?.invoke(context)
+        withContext(Dispatchers.IO) {
+            launch {
+                val result = context.showSnackbar(config)
+                if (result == SnackbarResult.ActionPerformed) {
+                    onAction?.invoke(context)
+                }
+            }
         }
     }
 }

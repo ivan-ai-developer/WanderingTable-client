@@ -16,6 +16,7 @@ import ru.gohasoft.wanderingtable.core.domain.exception.NetworkException
 import ru.gohasoft.wanderingtable.core.domain.model.user.Role
 import ru.gohasoft.wanderingtable.core.network.auth.TokenPair
 import ru.gohasoft.wanderingtable.data.auth.fake.FakeAuthApi
+import ru.gohasoft.wanderingtable.data.auth.fake.FakeCacheCleaner
 import ru.gohasoft.wanderingtable.data.auth.fake.FakePreferencesDataStore
 import ru.gohasoft.wanderingtable.data.auth.fake.FakeSessionApi
 import ru.gohasoft.wanderingtable.data.auth.fake.FakeTokenCipher
@@ -37,9 +38,11 @@ class TokenBackedAuthRepositoryTest {
         cipher = FakeTokenCipher(),
         json = Json { ignoreUnknownKeys = true },
     )
+    private val cacheCleaner = FakeCacheCleaner()
     private val repository = TokenBackedAuthRepository(
         remoteDataSource = RemoteDataSource(authApi, sessionApi),
         localDataSource = localDataSource,
+        cacheCleaners = setOf(cacheCleaner),
     )
 
     @Test
@@ -190,6 +193,34 @@ class TokenBackedAuthRepositoryTest {
             .isEqualTo(ResetPasswordRequestDto("reset-99", "Password1"))
         assertThat(result).isInstanceOf(Result.Success::class)
         assertThat(localDataSource.getTokens()).isEqualTo(TokenPair("access-1", "refresh-1"))
+    }
+
+    /** The next account on this device must not open on the previous one's cached data. */
+    @Test
+    fun `logging out empties the feature caches`() = runTest {
+        localDataSource.saveTokens(TokenPair("access-1", "refresh-1"))
+
+        repository.logOut().awaitFinalResult()
+
+        assertThat(cacheCleaner.clearCallCount).isEqualTo(1)
+        assertThat(localDataSource.getTokens()).isNull()
+    }
+
+    /** Being unable to empty a cache must not leave the user in the session they asked to leave. */
+    @Test
+    fun `logging out still signs out when a cache cannot be emptied`() = runTest {
+        val failing = FakeCacheCleaner(error = IllegalStateException("disk is gone"))
+        val repository = TokenBackedAuthRepository(
+            remoteDataSource = RemoteDataSource(authApi, sessionApi),
+            localDataSource = localDataSource,
+            cacheCleaners = setOf(failing),
+        )
+        localDataSource.saveTokens(TokenPair("access-1", "refresh-1"))
+
+        val result = repository.logOut().awaitFinalResult()
+
+        assertThat(result).isInstanceOf(Result.Success::class)
+        assertThat(localDataSource.getTokens()).isNull()
     }
 
     private fun cachedUser(name: String = "Alice") = CachedUserDbo(

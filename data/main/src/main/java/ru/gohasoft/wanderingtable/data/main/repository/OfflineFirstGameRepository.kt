@@ -7,7 +7,7 @@ import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.model.game.Game
 import ru.gohasoft.wanderingtable.core.domain.model.game.GameResultType
 import ru.gohasoft.wanderingtable.core.domain.repository.GameRepository
-import ru.gohasoft.wanderingtable.data.main.local.CacheDataSource
+import ru.gohasoft.wanderingtable.data.main.local.LocalDataSource
 import ru.gohasoft.wanderingtable.data.main.mapper.toGame
 import ru.gohasoft.wanderingtable.data.main.mapper.toGames
 import ru.gohasoft.wanderingtable.data.main.remote.RemoteDataSource
@@ -22,19 +22,19 @@ import ru.gohasoft.wanderingtable.data.main.remote.dto.CreateGameRequestDto
  */
 internal class OfflineFirstGameRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val cacheDataSource: CacheDataSource,
+    private val localDataSource: LocalDataSource,
 ) : GameRepository {
 
     override fun getGames(query: String?): Flow<Result<List<Game>>> = ResultFlow.offlineFirst(
-        query = { cacheDataSource.getGames(query) },
+        query = { localDataSource.getGames(query) },
         fetch = { remoteDataSource.getGames(null).toGames() },
-        saveFetchResult = { fetched, _ -> cacheDataSource.saveGames(fetched) },
+        saveFetchResult = { fetched, _ -> localDataSource.saveGames(fetched) },
     )
 
     override fun getGame(gameId: String): Flow<Result<Game>> = ResultFlow.offlineFirst(
-        query = { cacheDataSource.getGame(gameId) },
+        query = { localDataSource.getGame(gameId) },
         fetch = { remoteDataSource.getGame(gameId).toGame() },
-        saveFetchResult = { fetched, _ -> cacheDataSource.upsertGames(listOf(fetched)) },
+        saveFetchResult = { fetched, _ -> localDataSource.upsertGames(listOf(fetched)) },
     )
 
     /**

@@ -8,7 +8,7 @@ import ru.gohasoft.wanderingtable.core.domain.Result
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEvent
 import ru.gohasoft.wanderingtable.core.domain.model.event.GameEventStatus
 import ru.gohasoft.wanderingtable.core.domain.repository.GameEventRepository
-import ru.gohasoft.wanderingtable.data.main.local.CacheDataSource
+import ru.gohasoft.wanderingtable.data.main.local.LocalDataSource
 import ru.gohasoft.wanderingtable.data.main.mapper.toGameEvent
 import ru.gohasoft.wanderingtable.data.main.mapper.toGameEvents
 import ru.gohasoft.wanderingtable.data.main.remote.RemoteDataSource
@@ -24,15 +24,15 @@ import ru.gohasoft.wanderingtable.data.main.remote.dto.CreateRegularGameRequestD
  */
 internal class OfflineFirstGameEventRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val cacheDataSource: CacheDataSource,
+    private val localDataSource: LocalDataSource,
 ) : GameEventRepository {
 
     override fun getEvents(status: GameEventStatus?): Flow<Result<List<GameEvent>>> {
-        val scope = CacheDataSource.clubScope(status?.name)
+        val scope = LocalDataSource.clubScope(status?.name)
         return ResultFlow.offlineFirst(
-            query = { cacheDataSource.getEvents(scope) },
+            query = { localDataSource.getEvents(scope) },
             fetch = { remoteDataSource.getEvents(status?.name).toGameEvents() },
-            saveFetchResult = { fetched, _ -> cacheDataSource.saveEvents(scope, fetched) },
+            saveFetchResult = { fetched, _ -> localDataSource.saveEvents(scope, fetched) },
         )
     }
 
@@ -40,11 +40,11 @@ internal class OfflineFirstGameEventRepository @Inject constructor(
         ResultFlow.onlineOnly { remoteDataSource.getEvent(eventId).toGameEvent() }
 
     override fun getUserGames(userId: String): Flow<Result<List<GameEvent>>> {
-        val scope = CacheDataSource.userScope(userId)
+        val scope = LocalDataSource.userScope(userId)
         return ResultFlow.offlineFirst(
-            query = { cacheDataSource.getEvents(scope) },
+            query = { localDataSource.getEvents(scope) },
             fetch = { remoteDataSource.getUserGames(userId).toGameEvents() },
-            saveFetchResult = { fetched, _ -> cacheDataSource.saveEvents(scope, fetched) },
+            saveFetchResult = { fetched, _ -> localDataSource.saveEvents(scope, fetched) },
         )
     }
 

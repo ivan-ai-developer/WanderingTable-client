@@ -8,7 +8,7 @@ import ru.gohasoft.wanderingtable.core.domain.model.user.Role
 import ru.gohasoft.wanderingtable.core.domain.model.user.User
 import ru.gohasoft.wanderingtable.core.domain.model.user.UserProfile
 import ru.gohasoft.wanderingtable.core.domain.repository.UserRepository
-import ru.gohasoft.wanderingtable.data.main.local.CacheDataSource
+import ru.gohasoft.wanderingtable.data.main.local.LocalDataSource
 import ru.gohasoft.wanderingtable.data.main.mapper.toUser
 import ru.gohasoft.wanderingtable.data.main.mapper.toUserProfile
 import ru.gohasoft.wanderingtable.data.main.remote.RemoteDataSource
@@ -20,23 +20,23 @@ import ru.gohasoft.wanderingtable.data.main.remote.RemoteDataSource
  */
 internal class OfflineFirstUserRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val cacheDataSource: CacheDataSource,
+    private val localDataSource: LocalDataSource,
 ) : UserRepository {
 
     override fun getProfile(): Flow<Result<UserProfile>> = ResultFlow.offlineFirst(
-        query = { cacheDataSource.getProfile() },
+        query = { localDataSource.getProfile() },
         fetch = { remoteDataSource.getProfile().toUserProfile() },
-        saveFetchResult = { fetched, _ -> cacheDataSource.saveProfile(fetched) },
+        saveFetchResult = { fetched, _ -> localDataSource.saveProfile(fetched) },
     )
 
     /** PATCH /users/me answers with the account only, so the fresh profile is read back. */
     override fun updateName(name: String): Flow<Result<UserProfile>> = ResultFlow.offlineFirst(
-        query = { cacheDataSource.getProfile() },
+        query = { localDataSource.getProfile() },
         fetch = {
             remoteDataSource.updateName(name)
             remoteDataSource.getProfile().toUserProfile()
         },
-        saveFetchResult = { fetched, _ -> cacheDataSource.saveProfile(fetched) },
+        saveFetchResult = { fetched, _ -> localDataSource.saveProfile(fetched) },
     )
 
     /** Another member's account, looked up for role management — nothing of ours to cache. */

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import ru.gohasoft.wanderingtable.core.data.repository.ResultFlow
 import ru.gohasoft.wanderingtable.core.domain.Result
+import ru.gohasoft.wanderingtable.core.data.cache.CacheCleaner
 import ru.gohasoft.wanderingtable.core.domain.exception.NetworkException.Unauthorized
 import ru.gohasoft.wanderingtable.core.domain.model.Session
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
@@ -25,6 +26,7 @@ import ru.gohasoft.wanderingtable.data.auth.remote.RemoteDataSource
 internal class TokenBackedAuthRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
+    private val cacheCleaners: Set<@JvmSuppressWildcards CacheCleaner>,
 ) : AuthRepository {
 
     override fun signUp(
@@ -60,6 +62,10 @@ internal class TokenBackedAuthRepository @Inject constructor(
         }
     }
 
+    /**
+     * Signing out drops everything tied to the session, cached feature data included — leaving it
+     * to the screen that offers the button would mean every future caller has to remember.
+     */
     override fun logOut(): Flow<Result<Unit>> =
         ResultFlow.onlineOnly {
             // Best effort: the endpoint is idempotent and losing the round trip only leaves a
@@ -68,6 +74,9 @@ internal class TokenBackedAuthRepository @Inject constructor(
                 runCatching { remoteDataSource.logout(tokens.refreshToken) }
             }
             localDataSource.clear()
+            // Also best effort, and after the session is gone: a store that fails to empty must
+            // not leave the user signed in, which is the state they asked to leave.
+            cacheCleaners.forEach { cleaner -> runCatching { cleaner.clear() } }
         }
 
     override fun requestPasswordReset(email: String): Flow<Result<Unit>> =
