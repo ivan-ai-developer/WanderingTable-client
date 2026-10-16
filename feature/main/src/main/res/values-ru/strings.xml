@@ -149,7 +149,7 @@
 
     <!-- Настройки уведомлений -->
     <string name="notification_settings_title">Настройки уведомлений</string>
-    <string name="notification_settings_push_title">Push-уведомления</string>
+    <string name="notification_settings_push_title">Пуш-уведомления</string>
     <string name="notification_settings_push_subtitle">Включить или выключить все уведомления</string>
     <string name="notification_settings_section_activity">Активность</string>
     <string name="notification_settings_invites">Приглашения и найденные оппоненты</string>
@@ -180,7 +180,7 @@
     <string name="club_admin_section_my_roles">Ваши роли</string>
     <string name="club_admin_my_roles_hint">Роль заведующего сама по себе их не даёт — включите нужные.</string>
     <string name="club_admin_section_grant">Выдать роль участнику</string>
-    <string name="club_admin_label_email">Email участника</string>
+    <string name="club_admin_label_email">Электронная почта участника</string>
     <string name="club_admin_search">Найти участника</string>
     <string name="club_admin_clear">Сбросить</string>
     <string name="club_admin_roles_saved">Роли сохранены.</string>
@@ -194,7 +194,7 @@
     <string name="club_admin_role_tournament_creator_hint">Создание турниров, чемпионатов и лиг.</string>
     <string name="club_admin_role_club_manager">Заведующий клуба</string>
     <string name="club_admin_role_club_manager_hint">Выдаёт роли, управляет любым событием. Снять с себя нельзя.</string>
-    <string name="club_admin_error_no_such_member">Участника с таким email в клубе нет.</string>
+    <string name="club_admin_error_no_such_member">Участника с таким адресом электронной почты в клубе нет.</string>
     <string name="club_admin_error_forbidden">Это может сделать только заведующий клуба.</string>
     <string name="club_admin_error_last_manager">В клубе должен остаться хотя бы один заведующий, и снять роль с себя нельзя.</string>
     <string name="club_admin_error_bad_role">Сервер не распознал эту роль.</string>

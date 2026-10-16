@@ -46,6 +46,12 @@ gradlew lint                        # Run Android Lint
 
 There are currently no linters/formatters configured beyond Android Lint and `kotlin.code.style=official` (set in `gradle.properties`).
 
+## Localization
+
+- User-facing strings must be localized in both English and Russian. Keep the English source strings in each module's `src/main/res/values/strings.xml` and add matching Russian translations in `src/main/res/values-ru/strings.xml`.
+- Keep the resource names and format placeholders (such as `%1$s` and `%1$d`) identical between locales. When adding or changing a string, update both locale files in the same change.
+- Do not hardcode user-facing text in Kotlin or Compose; use string resources. English is the fallback locale when a translation is unavailable, so Russian resource files should cover every key from the module's English file.
+
 ## Architecture notes
 
 - Entry point: `WanderingTableApp` (`@HiltAndroidApp`) → `MainActivity` (`@AndroidEntryPoint`), which injects `Navigation3Router` and renders `NavigationHost(router, startScreen)` inside `WanderingTableTheme` (theme lives in `:core:uikit`).

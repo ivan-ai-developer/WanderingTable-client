@@ -11,6 +11,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -84,12 +85,17 @@ internal class WanderingTableMessagingService : FirebaseMessagingService() {
             ?: NotificationType.GENERAL
         return Notification(
             id = messageId ?: UUID.randomUUID().toString(),
-            title = data[KEY_TITLE] ?: notification?.title.orEmpty(),
-            message = data[KEY_BODY] ?: notification?.body.orEmpty(),
+            title = data.localized(KEY_TITLE) ?: notification?.title.orEmpty(),
+            message = data.localized(KEY_BODY) ?: notification?.body.orEmpty(),
             createdAt = Instant.now(),
             isRead = false,
             type = type,
         )
+    }
+
+    private fun Map<String, String>.localized(key: String): String? {
+        val language = Locale.getDefault().language
+        return get("${key}_$language") ?: get("${key}_en") ?: get(key)
     }
 
     private fun NotificationSettings.allows(type: NotificationType): Boolean = when {

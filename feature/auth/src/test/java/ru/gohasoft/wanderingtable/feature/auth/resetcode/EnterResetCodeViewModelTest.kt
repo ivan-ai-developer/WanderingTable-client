@@ -9,6 +9,8 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import assertk.assertions.isTrue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -24,6 +26,9 @@ import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 import ru.gohasoft.wanderingtable.feature.auth.R
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeAuthRepository
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeRouter
+import ru.gohasoft.wanderingtable.feature.auth.screen.resetcode.EnterResetCodeEvent
+import ru.gohasoft.wanderingtable.feature.auth.screen.resetcode.EnterResetCodeScreen
+import ru.gohasoft.wanderingtable.feature.auth.screen.resetcode.EnterResetCodeViewModel
 
 class EnterResetCodeViewModelTest {
 
@@ -101,6 +106,12 @@ class EnterResetCodeViewModelTest {
     @Test
     fun `resending clears the stale code and confirms`() = runTest {
         viewModel.onEvent(EnterResetCodeEvent.OnCodeChanged("123456"))
+        viewModel.onEvent(EnterResetCodeEvent.OnResendClick)
+
+        assertThat(authRepository.requestPasswordResetCallCount).isEqualTo(0)
+
+        advanceTimeBy(30_000)
+        runCurrent()
 
         viewModel.onEvent(EnterResetCodeEvent.OnResendClick)
 

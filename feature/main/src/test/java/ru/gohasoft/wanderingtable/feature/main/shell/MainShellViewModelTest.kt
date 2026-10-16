@@ -25,7 +25,7 @@ import ru.gohasoft.wanderingtable.feature.main.fake.FakeNotificationRepository
 import ru.gohasoft.wanderingtable.feature.main.fake.FakePushTokenProvider
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeRouter
 import ru.gohasoft.wanderingtable.feature.main.fake.FakeUserRepository
-import ru.gohasoft.wanderingtable.feature.main.games.GamesFilter
+import ru.gohasoft.wanderingtable.feature.main.screen.shell.content.games.GamesFilter
 
 class MainShellViewModelTest {
 

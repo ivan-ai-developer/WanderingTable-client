@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">С возвращением</string>
+    <string name="login_subtitle">Войдите, чтобы найти следующую игру</string>
+    <string name="login_email_label">Электронная почта</string>
+    <string name="login_email_placeholder">you@example.com</string>
+    <string name="login_password_label">Пароль</string>
+    <string name="login_password_placeholder">Введите пароль</string>
+    <string name="login_submit_button">Войти</string>
+    <string name="login_signup_prompt">Ещё нет аккаунта?</string>
+    <string name="login_signup_link">Зарегистрироваться</string>
+    <string name="login_forgot_password_link">Забыли пароль?</string>
+
+    <string name="signup_title">Создать аккаунт</string>
+    <string name="signup_subtitle">Присоединяйтесь к клубу и играйте вместе</string>
+    <string name="signup_name_label">Имя</string>
+    <string name="signup_name_placeholder">Введите имя</string>
+    <string name="signup_email_label">Электронная почта</string>
+    <string name="signup_email_placeholder">you@example.com</string>
+    <string name="signup_password_label">Пароль</string>
+    <string name="signup_password_placeholder">Не менее 8 символов</string>
+    <string name="signup_confirm_password_label">Подтвердите пароль</string>
+    <string name="signup_confirm_password_placeholder">Введите пароль ещё раз</string>
+    <string name="signup_submit_button">Зарегистрироваться</string>
+    <string name="signup_login_prompt">Уже есть аккаунт?</string>
+    <string name="signup_login_link">Войти</string>
+    <string name="signup_error_password_mismatch">Пароли не совпадают</string>
+
+    <string name="forgot_password_title">Сброс пароля</string>
+    <string name="forgot_password_subtitle">Введите адрес электронной почты, и мы отправим вам код из 6 цифр</string>
+    <string name="forgot_password_email_label">Электронная почта</string>
+    <string name="forgot_password_email_placeholder">you@example.com</string>
+    <string name="forgot_password_submit_button">Отправить код</string>
+    <string name="forgot_password_back_link">Вернуться ко входу</string>
+
+    <string name="reset_code_title">Введите код</string>
+    <string name="reset_code_subtitle">Мы отправили код из 6 цифр на адрес %1$s. Срок действия — 15 минут</string>
+    <string name="reset_code_label">Код</string>
+    <string name="reset_code_placeholder">123456</string>
+    <string name="reset_code_submit_button">Продолжить</string>
+    <string name="reset_code_resend_link">Отправить новый код</string>
+    <string name="reset_code_resend_countdown">Отправить новый код (%1$d с)</string>
+    <string name="reset_code_resent_message">Новый код уже отправляется</string>
+    <string name="reset_code_back_link">Вернуться ко входу</string>
+
+    <string name="new_password_title">Новый пароль</string>
+    <string name="new_password_subtitle">Придумайте пароль для аккаунта</string>
+    <string name="new_password_label">Пароль</string>
+    <string name="new_password_placeholder">Не менее 8 символов</string>
+    <string name="new_password_confirm_label">Подтвердите пароль</string>
+    <string name="new_password_confirm_placeholder">Введите пароль ещё раз</string>
+    <string name="new_password_submit_button">Сохранить пароль</string>
+    <string name="new_password_updated_message">Пароль изменён. Войдите с новым паролем</string>
+
+    <string name="auth_error_name_required">Введите имя</string>
+    <string name="auth_error_name_too_long">Имя не должно превышать 64 символа</string>
+    <string name="auth_error_invalid_email">Введите корректный адрес электронной почты</string>
+    <string name="auth_error_password_required">Введите пароль</string>
+    <string name="auth_error_password_too_short">Пароль должен содержать не менее 8 символов</string>
+    <string name="auth_error_password_missing_lowercase">Добавьте в пароль строчную букву</string>
+    <string name="auth_error_password_missing_uppercase">Добавьте в пароль заглавную букву</string>
+    <string name="auth_error_password_missing_digit">Добавьте в пароль цифру</string>
+    <string name="auth_error_login_invalid_credentials">Неверный адрес электронной почты или пароль</string>
+    <string name="auth_error_signup_email_taken">Аккаунт с таким адресом электронной почты уже существует</string>
+    <string name="auth_error_reset_code_required">Введите код из 6 цифр из письма</string>
+    <string name="auth_error_reset_code_rejected">Код неверен или срок его действия истёк. Запросите новый</string>
+    <string name="auth_error_reset_request_expired">Срок действия запроса на сброс истёк. Начните сначала</string>
+    <string name="auth_error_too_many_attempts">Слишком много попыток. Попробуйте через несколько минут</string>
+    <string name="auth_error_bad_request">Проверьте введённые данные и попробуйте ещё раз</string>
+    <string name="auth_error_no_internet">Нет подключения к интернету</string>
+    <string name="auth_error_generic">Что-то пошло не так. Попробуйте ещё раз</string>
+</resources>

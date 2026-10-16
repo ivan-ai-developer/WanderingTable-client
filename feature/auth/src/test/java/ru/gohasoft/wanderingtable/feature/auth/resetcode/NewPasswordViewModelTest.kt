@@ -21,6 +21,9 @@ import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 import ru.gohasoft.wanderingtable.feature.auth.R
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeAuthRepository
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeRouter
+import ru.gohasoft.wanderingtable.feature.auth.screen.newpassword.NewPasswordEvent
+import ru.gohasoft.wanderingtable.feature.auth.screen.newpassword.NewPasswordScreen
+import ru.gohasoft.wanderingtable.feature.auth.screen.newpassword.NewPasswordViewModel
 
 class NewPasswordViewModelTest {
 

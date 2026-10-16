@@ -20,6 +20,8 @@ import ru.gohasoft.wanderingtable.core.presentation.navigation.command.NewRoot
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeAppEntryScreens
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeAuthRepository
 import ru.gohasoft.wanderingtable.feature.auth.fake.FakeRouter
+import ru.gohasoft.wanderingtable.feature.auth.screen.login.LoginEvent
+import ru.gohasoft.wanderingtable.feature.auth.screen.login.LoginViewModel
 
 class LoginViewModelTest {
 

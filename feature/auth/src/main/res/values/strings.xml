@@ -39,6 +39,7 @@
     <string name="reset_code_placeholder">123456</string>
     <string name="reset_code_submit_button">Continue</string>
     <string name="reset_code_resend_link">Send a new code</string>
+    <string name="reset_code_resend_countdown">Send a new code (%1$d s)</string>
     <string name="reset_code_resent_message">A new code is on its way</string>
     <string name="reset_code_back_link">Back to sign in</string>
 
