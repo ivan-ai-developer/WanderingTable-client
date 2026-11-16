@@ -151,7 +151,7 @@ private fun NotificationsContentPreview() {
                         id = "1",
                         initials = "VS",
                         title = "Opponent found for Catan!",
-                        message = "Someone joined your request for Sat, 7:00 PM",
+                        message = "Someone joined your request for Sat, 19:00",
                         timestamp = TextResource.DynamicString("2h ago"),
                         isRead = false,
                         highlighted = false,

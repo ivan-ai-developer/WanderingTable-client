@@ -2,4 +2,6 @@
     <string name="app_name">WanderingTable</string>
     <string name="push_channel_name">Club updates</string>
     <string name="push_channel_description">Game reminders, opponent matches and club news.</string>
+    <string name="local_network_permission_message">Allow access to nearby devices so the app can connect to the club server on your Wi-Fi network.</string>
+    <string name="local_network_permission_settings">Open app settings</string>
 </resources>

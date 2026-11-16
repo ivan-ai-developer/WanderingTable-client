@@ -3,4 +3,6 @@
     <string name="app_name">Кочующий стол</string>
     <string name="push_channel_name">Новости клуба</string>
     <string name="push_channel_description">Напоминания о партиях, найденные оппоненты и новости клуба.</string>
+    <string name="local_network_permission_message">Разрешите доступ к устройствам поблизости, чтобы приложение могло подключиться к серверу клуба в сети Wi-Fi.</string>
+    <string name="local_network_permission_settings">Открыть настройки приложения</string>
 </resources>

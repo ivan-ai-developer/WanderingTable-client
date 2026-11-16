@@ -58,7 +58,7 @@ private fun DetailRowPreview() {
                 .padding(WanderingTableSpacing.m),
             verticalArrangement = Arrangement.spacedBy(WanderingTableSpacing.m),
         ) {
-            DetailRow(label = "Date & time", value = "Sat, Jul 12 · 7:00 PM")
+            DetailRow(label = "Date & time", value = "Sat, Jul 12 · 19:00")
             DetailRow(label = "Players", value = "1 of 2 joined")
         }
     }

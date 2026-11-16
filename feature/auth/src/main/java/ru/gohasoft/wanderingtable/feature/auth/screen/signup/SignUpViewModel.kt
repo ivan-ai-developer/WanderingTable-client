@@ -28,13 +28,14 @@ import ru.gohasoft.wanderingtable.feature.auth.screen.signup.SignUpEvent.OnSignU
 import ru.gohasoft.wanderingtable.feature.auth.validation.AuthValidator
 import ru.gohasoft.wanderingtable.feature.auth.mapper.toFieldError
 import ru.gohasoft.wanderingtable.feature.auth.mapper.toSignUpFieldError
+import ru.gohasoft.wanderingtable.feature.auth.screen.signup.SignUpEffect.SetStatusBarDefaultStyle
 
 @HiltViewModel
 internal class SignUpViewModel @Inject constructor(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val appEntryScreens: AppEntryScreens,
-) : MviViewModel<SignUpState, SignUpEvent, Unit>() {
+) : MviViewModel<SignUpState, SignUpEvent, SignUpEffect>() {
 
     private val _state = MutableStateFlow(SignUpState())
     override val state: StateFlow<SignUpState> = _state.asStateFlow()
@@ -106,8 +107,10 @@ internal class SignUpViewModel @Inject constructor(
                             isLoading = true,
                             generalError = null
                         )
-                    is Result.Success ->
-                        router.execute(NewRoot(appEntryScreens.home()))
+                    is Result.Success -> {
+                        emitEffect(SetStatusBarDefaultStyle)
+                        navigateToHomeScreen()
+                    }
                     is Result.Error ->
                         updateState(
                             isLoading = false,
@@ -116,6 +119,10 @@ internal class SignUpViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun navigateToHomeScreen() {
+        router.execute(NewRoot(appEntryScreens.home()))
     }
 
     private fun updateState(

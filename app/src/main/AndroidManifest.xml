@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
     <!-- API 33+: the system tray needs it. Denying it only silences the tray; the in-app
          notification feed still fills up. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

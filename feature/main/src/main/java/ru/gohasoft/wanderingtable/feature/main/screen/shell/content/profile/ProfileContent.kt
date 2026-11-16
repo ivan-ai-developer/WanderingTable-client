@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.getText
+import ru.gohasoft.wanderingtable.core.presentation.utils.ui.InverseStatusBarElementsColor
 import ru.gohasoft.wanderingtable.core.presentation.viewmodel.MviContent
 import ru.gohasoft.wanderingtable.core.uikit.components.header.ProfileGradientHeader
 import ru.gohasoft.wanderingtable.core.uikit.components.header.ProfileStat
@@ -63,25 +65,7 @@ private fun ProfileScreenContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    DisposableEffect(Unit) {
-        val activity = context as? ComponentActivity
-
-        activity?.enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
-                android.graphics.Color.TRANSPARENT,
-            )
-        )
-
-        onDispose {
-            activity?.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.light(
-                    android.graphics.Color.TRANSPARENT,
-                    android.graphics.Color.TRANSPARENT,
-                )
-            )
-        }
-    }
+    InverseStatusBarElementsColor()
     val profile = state.profile
     Column(
         modifier = modifier
@@ -91,12 +75,16 @@ private fun ProfileScreenContent(
         when {
             state.isLoading -> LoadingState(modifier = Modifier.fillMaxSize())
 
-            profile == null -> MessageState(
-                title = stringResource(R.string.profile_error_title),
-                subtitle = state.error?.getText(),
-                actionText = stringResource(R.string.main_action_retry),
-                onActionClick = { onEvent(ProfileEvent.OnRetryClick) },
-            )
+            profile == null -> {
+                Spacer(Modifier.weight(1f))
+                MessageState(
+                    title = stringResource(R.string.profile_error_title),
+                    subtitle = state.error?.getText(),
+                    actionText = stringResource(R.string.main_action_retry),
+                    onActionClick = { onEvent(ProfileEvent.OnRetryClick) },
+                )
+                Spacer(Modifier.weight(1f))
+            }
 
             else -> ProfileBody(
                 profile = profile,
@@ -218,6 +206,7 @@ private fun ProfileScreenContentPreview() {
                     canPostNews = true,
                     isClubManager = true,
                 ),
+                error = TextResource.DynamicString("error")
             ),
             onEvent = {},
             onOpenGames = {},

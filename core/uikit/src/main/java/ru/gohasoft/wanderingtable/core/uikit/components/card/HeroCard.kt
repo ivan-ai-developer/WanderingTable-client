@@ -118,7 +118,7 @@ private fun HeroCardPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 eyebrow = "Your next game",
                 title = "Terraforming Mars",
-                meta = "Jul 14 · 2:00 PM",
+                meta = "Jul 14 · 14:00",
             ) {
                 StackedAvatarGroup(initials = listOf("MR", "DK"), extraCount = 0)
             }

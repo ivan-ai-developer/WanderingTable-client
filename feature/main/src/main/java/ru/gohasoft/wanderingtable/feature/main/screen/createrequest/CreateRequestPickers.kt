@@ -55,7 +55,6 @@ internal fun CreateRequestPickers(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StartDatePicker(
     selectedEpochMillis: Long,
@@ -88,7 +87,7 @@ private fun StartTimePicker(
     onPicked: (hour: Int, minute: Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val pickerState = rememberTimePickerState()
+    val pickerState = rememberTimePickerState(is24Hour = true)
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {

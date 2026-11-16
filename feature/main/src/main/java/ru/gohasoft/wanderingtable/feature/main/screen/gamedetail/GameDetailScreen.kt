@@ -184,7 +184,7 @@ private fun GameDetailContentPreview() {
                 hostLine = TextResource.DynamicString("Hosted by a club member"),
                 hostInitials = "?",
                 skillLabel = TextResource.DynamicString("Any level"),
-                dateTimeLabel = "Sat, Jul 12 · 7:00 PM",
+                dateTimeLabel = "Sat, Jul 12 · 19:00",
                 locationLabel = TextResource.DynamicString("At the club"),
                 playersLabel = TextResource.DynamicString("1 of 2 joined"),
                 participantInitials = listOf("?"),

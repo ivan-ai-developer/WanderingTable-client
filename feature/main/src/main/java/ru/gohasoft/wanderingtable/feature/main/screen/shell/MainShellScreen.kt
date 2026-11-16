@@ -1,5 +1,6 @@
 package ru.gohasoft.wanderingtable.feature.main.screen.shell
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,8 +33,8 @@ import ru.gohasoft.wanderingtable.feature.main.screen.shell.content.profile.Prof
 
 /**
  * The one entry the back stack holds while the user is inside the app. Tabs live inside it as
- * composables, so switching tabs is state rather than navigation, and the system back button
- * leaves the app instead of unwinding through tabs.
+ * composables, so switching tabs is state rather than navigation. System back returns to Home
+ * from the other tabs and leaves the app only from Home.
  */
 @Serializable
 internal data object MainShellScreen : ComposableScreen() {
@@ -54,6 +55,10 @@ private fun MainShellContent(
     state: MainShellState,
     onEvent: (MainShellEvent) -> Unit,
 ) {
+    BackHandler(enabled = state.tab != MainTab.HOME && !state.isCreateSheetVisible) {
+        onEvent(MainShellEvent.OnNavItemSelected(MainTab.HOME.navIndex))
+    }
+
     val contentPadding = PaddingValues(bottom = BottomBarInset)
 
     Box(

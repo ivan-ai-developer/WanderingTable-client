@@ -20,10 +20,10 @@ import ru.gohasoft.wanderingtable.feature.main.R
  * anything with words around a number goes through [TextResource] so it can be translated.
  */
 
-private const val DATE_TIME_PATTERN = "EEE, MMM d · h:mm a"
+private const val TIME_PATTERN = "HH:mm"
+private const val DATE_TIME_PATTERN = "EEE, MMM d · $TIME_PATTERN"
 private const val SHORT_DATE_PATTERN = "MMM d"
 private const val LONG_DATE_PATTERN = "MMMM d, yyyy"
-private const val TIME_PATTERN = "h:mm a"
 
 /**
  * Formatters are per-locale rather than per-process: the device language can change while the app
@@ -37,7 +37,7 @@ private fun formatter(pattern: String): DateTimeFormatter {
     return formatters.getOrPut(pattern to locale) { DateTimeFormatter.ofPattern(pattern, locale) }
 }
 
-/** "Sat, Jul 12 · 7:00 PM" — the meta line of a game card. */
+/** "Sat, Jul 12 · 19:00" — the meta line of a game card. */
 internal fun Instant.toDateTimeLabel(zone: ZoneId = ZoneId.systemDefault()): String =
     formatter(DATE_TIME_PATTERN).format(atZone(zone))
 

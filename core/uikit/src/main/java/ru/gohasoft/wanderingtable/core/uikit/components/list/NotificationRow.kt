@@ -113,7 +113,7 @@ private fun NotificationRowPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 initials = "MR",
                 title = "Opponent found for Catan!",
-                subtitle = "Someone joined your request for Sat, 7:00 PM",
+                subtitle = "Someone joined your request for Sat, 19:00",
                 timestamp = "2h ago",
             )
             NotificationRow(

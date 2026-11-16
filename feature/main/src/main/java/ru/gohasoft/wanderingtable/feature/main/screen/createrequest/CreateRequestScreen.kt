@@ -6,6 +6,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -164,6 +165,8 @@ private fun CreateRequestContent(
                 )
             }
 
+            Spacer(Modifier.weight(1f))
+
             if (state.isSubmitting) {
                 LoadingState()
             } else {
@@ -199,7 +202,7 @@ private fun CreateRequestContentPreview() {
                 ),
                 selectedGameId = "1",
                 dateLabel = "Jul 16",
-                timeLabel = "6:00 PM",
+                timeLabel = "18:00",
                 table = "Table 2",
             ),
             onEvent = {},

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.gohasoft.wanderingtable.core.domain.Result
+import ru.gohasoft.wanderingtable.core.domain.firstSuccessOrErrorResult
 import ru.gohasoft.wanderingtable.core.domain.repository.AuthRepository
 import ru.gohasoft.wanderingtable.core.presentation.navigation.AppEntryScreens
 import ru.gohasoft.wanderingtable.core.presentation.navigation.screen.compose.ComposableScreen
@@ -29,15 +30,16 @@ internal class AppGateViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            authRepository.getSession().collect { result ->
-                when (result) {
-                    is Result.Success if result.data != null ->
-                        _startDestination.value = appEntryScreens.home()
-                    is Result.Success, is Result.Error ->
-                        _startDestination.value = appEntryScreens.login()
-                    is Result.Loading -> Unit
+            authRepository.getSession()
+                .firstSuccessOrErrorResult { result ->
+                    when (result) {
+                        is Result.Success if result.data != null ->
+                            _startDestination.value = appEntryScreens.home()
+                        is Result.Success, is Result.Error ->
+                            _startDestination.value = appEntryScreens.login()
+                        is Result.Loading -> Unit
+                    }
                 }
-            }
         }
     }
 }
