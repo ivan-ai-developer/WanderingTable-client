@@ -137,7 +137,7 @@ internal class CreateRequestViewModel @Inject constructor(
     }
 
     private fun submit() {
-        val current = _state.value
+        val current = state.value
         val gameId = current.selectedGameId ?: run {
             _state.update { it.copy(formError = StringResource(R.string.create_request_error_no_game)) }
             return
@@ -145,11 +145,9 @@ internal class CreateRequestViewModel @Inject constructor(
         if (current.isSubmitting) return
 
         val game = catalogue.firstOrNull { it.id == gameId }
-        val maxParticipants = current.playersNeeded + 1
-        val minParticipants = MIN_PARTICIPANTS.coerceAtMost(maxParticipants)
         // Checked here as well as server-side, so an impossible seat count is caught before the
         // round trip rather than coming back as an opaque 400.
-        if (game != null && !game.allows(minParticipants, maxParticipants)) {
+        if (game != null && !game.allows(current.playersNeeded)) {
             _state.update {
                 it.copy(
                     formError = StringResource(
@@ -172,8 +170,8 @@ internal class CreateRequestViewModel @Inject constructor(
                 description = current.note.takeIf(String::isNotBlank),
                 startsAt = Instant.ofEpochMilli(current.startsAtEpochMillis),
                 durationMinutes = DEFAULT_DURATION_MINUTES,
-                minParticipants = minParticipants,
-                maxParticipants = maxParticipants,
+                minParticipants = game?.minPlayers ?: current.playersNeeded,
+                maxParticipants = current.playersNeeded,
             ).firstSuccessOrErrorResult()
 
             _state.update { it.copy(isSubmitting = false) }
@@ -191,10 +189,10 @@ internal class CreateRequestViewModel @Inject constructor(
         }
     }
 
-    private fun Game.allows(minParticipants: Int, maxParticipants: Int): Boolean {
+    private fun Game.allows(currentPlayers: Int): Boolean {
         val lowerBound = minPlayers ?: return true
         val upperBound = maxPlayers ?: return true
-        return minParticipants >= lowerBound && maxParticipants <= upperBound
+        return currentPlayers in lowerBound..upperBound
     }
 
     private fun updateDraft(transform: (CreateRequestState) -> CreateRequestState) {

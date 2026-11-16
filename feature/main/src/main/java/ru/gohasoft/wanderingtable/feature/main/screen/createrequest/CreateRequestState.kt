@@ -1,5 +1,8 @@
 package ru.gohasoft.wanderingtable.feature.main.screen.createrequest
 
+import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
 import ru.gohasoft.wanderingtable.core.presentation.utils.resource.TextResource
 import ru.gohasoft.wanderingtable.feature.main.screen.settings.WatchedGameUi
 
@@ -27,5 +30,8 @@ internal data class CreateRequestState(
     val isSubmitting: Boolean = false,
     val formError: TextResource? = null,
 ) {
+    val startTime: LocalTime
+        get() = Instant.ofEpochMilli(startsAtEpochMillis).atZone(ZoneId.systemDefault()).toLocalTime()
+
     val canSubmit: Boolean get() = selectedGameId != null && !isSubmitting
 }

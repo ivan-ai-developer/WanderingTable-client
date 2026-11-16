@@ -21,6 +21,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import java.time.LocalTime
 import ru.gohasoft.wanderingtable.core.uikit.components.list.MenuRow
 import ru.gohasoft.wanderingtable.core.uikit.theme.WanderingTableSpacing
 import ru.gohasoft.wanderingtable.feature.main.R
@@ -43,6 +44,7 @@ internal fun CreateRequestPickers(
     }
     if (state.isTimePickerVisible) {
         StartTimePicker(
+            selectedTime = state.startTime,
             onPicked = { hour, minute -> onEvent(CreateRequestEvent.OnTimePicked(hour, minute)) },
             onDismiss = { onEvent(CreateRequestEvent.OnTimePickerDismissed) },
         )
@@ -84,10 +86,15 @@ private fun StartDatePicker(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StartTimePicker(
+    selectedTime: LocalTime,
     onPicked: (hour: Int, minute: Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val pickerState = rememberTimePickerState(is24Hour = true)
+    val pickerState = rememberTimePickerState(
+        initialHour = selectedTime.hour,
+        initialMinute = selectedTime.minute,
+        is24Hour = true,
+    )
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
